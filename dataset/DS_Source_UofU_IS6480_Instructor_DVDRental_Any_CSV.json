@@ -1,0 +1,24 @@
+{
+	"name": "DS_Source_UofU_IS6480_Instructor_DVDRental_Any_CSV",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_Blob_UofU_IS6480_sauofuis6480instdev001_is6480",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"folderPath": "Source/PostgresTutorial/DVDRental",
+				"container": "is6480"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": []
+	},
+	"type": "Microsoft.Synapse/workspaces/datasets"
+}

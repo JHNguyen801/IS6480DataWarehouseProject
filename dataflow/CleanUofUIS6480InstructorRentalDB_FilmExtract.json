@@ -1,0 +1,96 @@
+{
+	"name": "CleanUofUIS6480InstructorRentalDB_FilmExtract",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"linkedService": {
+						"referenceName": "saw-uofu-is6480-dldwhndev-001-WorkspaceDefaultStorage",
+						"type": "LinkedServiceReference"
+					},
+					"name": "UIS6480InstructorDVDRentalFilm"
+				}
+			],
+			"sinks": [
+				{
+					"linkedService": {
+						"referenceName": "saw-uofu-is6480-dldwhndev-001-WorkspaceDefaultStorage",
+						"type": "LinkedServiceReference"
+					},
+					"name": "sink"
+				}
+			],
+			"transformations": [
+				{
+					"name": "select"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          MovieID as short,",
+				"          Title as string,",
+				"          Description as string,",
+				"          ReleaseYear as short,",
+				"          LanguageID as string,",
+				"          RentalDuration as string,",
+				"          RentalRate as string,",
+				"          DurationMinutes as short,",
+				"          ReplacementCost as double,",
+				"          Rating as string,",
+				"          LastUpdated as string,",
+				"          SpecialFeatures as string,",
+				"          FullText as string",
+				"     ),",
+				"     useSchema: false,",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     format: 'delimited',",
+				"     fileSystem: 'fsuofuis6480dldw001',",
+				"     folderPath: 'Bronze/UofU/IS6480/Instructor/RentalDB/FilmExtract',",
+				"     fileName: 'data.csv',",
+				"     columnDelimiter: ',',",
+				"     escapeChar: '\\\\',",
+				"     quoteChar: '\\\"',",
+				"     columnNamesAsHeader: true) ~> UIS6480InstructorDVDRentalFilm",
+				"UIS6480InstructorDVDRentalFilm select(mapColumn(",
+				"          MovieID,",
+				"          Title,",
+				"          Description,",
+				"          ReleaseYear,",
+				"          LanguageID,",
+				"          RentalDuration,",
+				"          RentalRate,",
+				"          DurationMinutes,",
+				"          ReplacementCost,",
+				"          Rating,",
+				"          LastUpdated,",
+				"          SpecialFeatures,",
+				"          FullText",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select",
+				"select sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'delta',",
+				"     fileSystem: 'fsuofuis6480dldw001',",
+				"     folderPath: 'Silver/UofU/IS6480/Instructor/RentalDB/FilmExtract',",
+				"     overwrite: true,",
+				"     mergeSchema: false,",
+				"     autoCompact: false,",
+				"     optimizedWrite: false,",
+				"     vacuum: 0,",
+				"     deletable: false,",
+				"     insertable: true,",
+				"     updateable: false,",
+				"     upsertable: false,",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> sink"
+			]
+		}
+	}
+}

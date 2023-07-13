@@ -1,0 +1,23 @@
+{
+	"name": "DS_Bronze_UofU_IS6480_Instructor_DVDRental_Actor_CSV",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "saw-uofu-is6480-dldwhndev-001-WorkspaceDefaultStorage",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"folderPath": "Bronze/UofU/IS6480/Instructor/DVDRental/Actor",
+				"fileSystem": "fsuofuis6480dldw001"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"quoteChar": "\""
+		},
+		"schema": []
+	},
+	"type": "Microsoft.Synapse/workspaces/datasets"
+}

@@ -1,0 +1,30 @@
+{
+	"name": "DS_Source_UofU_IS6480_Instructor_RentalDB_Any_CSV",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_Blob_UofU_IS6480_sauofuis6480instdev001_is6480",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"datasetName": {
+				"type": "string",
+				"defaultValue": "FilmExtract"
+			}
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"folderPath": "Source/CompanyXYZ/RentalDB",
+				"container": "is6480"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": []
+	},
+	"type": "Microsoft.Synapse/workspaces/datasets"
+}

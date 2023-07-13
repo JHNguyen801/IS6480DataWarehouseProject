@@ -1,0 +1,87 @@
+{
+	"name": "CombineDVDRentalFilmRentalDBFilmExtract",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"linkedService": {
+						"referenceName": "saw-uofu-is6480-dldwhndev-001-WorkspaceDefaultStorage",
+						"type": "LinkedServiceReference"
+					},
+					"name": "DVDRentalFilm"
+				},
+				{
+					"linkedService": {
+						"referenceName": "saw-uofu-is6480-dldwhndev-001-WorkspaceDefaultStorage",
+						"type": "LinkedServiceReference"
+					},
+					"name": "RentalDBFilmExtract"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "DS_Source_UofU_IS6480_Instructor_RentalDB_Any_CSV",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "union1"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          FilmID as short,",
+				"          Title as string,",
+				"          Description as string,",
+				"          ReleasedYear as short,",
+				"          LanguageID as string,",
+				"          RentalDuraion as string,",
+				"          RentalRate as double,",
+				"          Length as short,",
+				"          ReplacementCost as double,",
+				"          Rating as string,",
+				"          LastUpdate as string,",
+				"          SpecialFeatures as string,",
+				"          FullText as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     format: 'delta',",
+				"     fileSystem: 'fsuofuis6480dldw001',",
+				"     folderPath: 'Silver/UofU/IS6480/Instructor/DVDRental/Film') ~> DVDRentalFilm",
+				"source(output(",
+				"          MovieID as short,",
+				"          Title as string,",
+				"          Description as string,",
+				"          ReleaseYear as short,",
+				"          LanguageID as string,",
+				"          RentalDuration as string,",
+				"          RentalRate as double,",
+				"          DurationMinutes as short,",
+				"          ReplacementCost as double,",
+				"          Rating as string,",
+				"          LastUpdated as string,",
+				"          SpecialFeatures as string,",
+				"          FullText as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     format: 'delta',",
+				"     fileSystem: 'fsuofuis6480dldw001',",
+				"     folderPath: 'Silver/UofU/IS6480/Instructor/RentalDB/FilmExtract') ~> RentalDBFilmExtract",
+				"DVDRentalFilm, RentalDBFilmExtract union(byName: false)~> union1",
+				"union1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> sink1"
+			]
+		}
+	}
+}

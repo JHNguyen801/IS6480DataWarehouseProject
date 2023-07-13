@@ -1,0 +1,47 @@
+{
+	"name": "PL_Orchestrate_Extract_Lab3_all",
+	"properties": {
+		"activities": [
+			{
+				"name": "ForEach1",
+				"type": "ForEach",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@createArray('payment','film')",
+						"type": "Expression"
+					},
+					"isSequential": true,
+					"activities": [
+						{
+							"name": "Execute Pipeline1",
+							"type": "ExecutePipeline",
+							"dependsOn": [],
+							"userProperties": [],
+							"typeProperties": {
+								"pipeline": {
+									"referenceName": "PL_Source_UofU_IS6480_Instructor_DVDRental_Any_Bronze_UofU_IS6480_Instructor_DVDRental_Any_CSV",
+									"type": "PipelineReference"
+								},
+								"waitOnCompletion": true,
+								"parameters": {
+									"datasetName": {
+										"value": "@item()",
+										"type": "Expression"
+									}
+								}
+							}
+						}
+					]
+				}
+			}
+		],
+		"folder": {
+			"name": "Orchestration"
+		},
+		"annotations": [],
+		"lastPublishTime": "2023-07-06T02:07:36Z"
+	},
+	"type": "Microsoft.Synapse/workspaces/pipelines"
+}

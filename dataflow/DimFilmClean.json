@@ -1,0 +1,98 @@
+{
+	"name": "DimFilmClean",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"linkedService": {
+						"referenceName": "saw-uofu-is6480-dldwhndev-001-WorkspaceDefaultStorage",
+						"type": "LinkedServiceReference"
+					},
+					"name": "dimsource"
+				}
+			],
+			"sinks": [
+				{
+					"linkedService": {
+						"referenceName": "saw-uofu-is6480-dldwhndev-001-WorkspaceDefaultStorage",
+						"type": "LinkedServiceReference"
+					},
+					"name": "dimsink",
+					"rejectedDataLinkedService": {
+						"referenceName": "saw-uofu-is6480-dldwhndev-001-WorkspaceDefaultStorage",
+						"type": "LinkedServiceReference"
+					}
+				}
+			],
+			"transformations": [
+				{
+					"name": "dimselect"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          film_id as short,",
+				"          title as string,",
+				"          description as string,",
+				"          release_year as short,",
+				"          language_id as boolean,",
+				"          rental_duration as short,",
+				"          rental_rate as double,",
+				"          length as short,",
+				"          replacement_cost as double,",
+				"          rating as string,",
+				"          last_update as string,",
+				"          special_features as string,",
+				"          fulltext as string",
+				"     ),",
+				"     useSchema: false,",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     format: 'delimited',",
+				"     fileSystem: 'fsuofuis6480dldw001',",
+				"     folderPath: 'Bronze/UofU/IS6480/Instructor/DVDRental/film',",
+				"     fileName: 'data.csv',",
+				"     columnDelimiter: ',',",
+				"     escapeChar: '\\\\',",
+				"     quoteChar: '\\\"',",
+				"     columnNamesAsHeader: true) ~> dimsource",
+				"dimsource select(mapColumn(",
+				"          FilmID = film_id,",
+				"          Title = title,",
+				"          Description = description,",
+				"          ReleaseYear = release_year,",
+				"          Rating = rating",
+				"     ),",
+				"     skipDuplicateMapInputs: false,",
+				"     skipDuplicateMapOutputs: false) ~> dimselect",
+				"dimselect sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'delta',",
+				"     fileSystem: 'fsuofuis6480dldw001',",
+				"     folderPath: 'Gold',",
+				"     mergeSchema: false,",
+				"     autoCompact: false,",
+				"     optimizedWrite: false,",
+				"     vacuum: 0,",
+				"     deletable: false,",
+				"     insertable: true,",
+				"     updateable: false,",
+				"     upsertable: false,",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapOutputs: true,",
+				"     mapColumn(",
+				"          FilmKey = FilmID,",
+				"          FilmID,",
+				"          Title,",
+				"          Description,",
+				"          ReleaseYear,",
+				"          Rating",
+				"     )) ~> dimsink"
+			]
+		}
+	}
+}

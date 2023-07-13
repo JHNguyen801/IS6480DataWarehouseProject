@@ -1,0 +1,42 @@
+{
+	"name": "PL_Silver_FilmAll_Film_Delta",
+	"properties": {
+		"activities": [
+			{
+				"name": "Data flow1",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.10:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "CombineDVDRentalFilmRentalDBFilmExtract",
+						"type": "DataFlowReference",
+						"datasetParameters": {
+							"sink1": {
+								"datasetName": "FilmExtract"
+							}
+						}
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine"
+				}
+			}
+		],
+		"folder": {
+			"name": "3_SilvertoSilver"
+		},
+		"annotations": [],
+		"lastPublishTime": "2023-07-12T06:22:20Z"
+	},
+	"type": "Microsoft.Synapse/workspaces/pipelines"
+}
