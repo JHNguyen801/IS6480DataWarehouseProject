@@ -1,0 +1,1423 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"workspaceName": {
+			"type": "string",
+			"metadata": "Workspace name",
+			"defaultValue": "saw-uofu-is6480-dldwhndev-001"
+		},
+		"saw-uofu-is6480-dldwhndev-001-WorkspaceDefaultSqlServer_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'saw-uofu-is6480-dldwhndev-001-WorkspaceDefaultSqlServer'",
+			"defaultValue": "Integrated Security=False;Encrypt=True;Connection Timeout=30;Data Source=tcp:saw-uofu-is6480-dldwhndev-001.sql.azuresynapse.net,1433;Initial Catalog=@{linkedService().DBName}"
+		},
+		"LS_Blob_UofU_IS6480_sauofuis6480instdev001_is6480_sasUri": {
+			"type": "secureString",
+			"metadata": "Secure string for 'sasUri' of 'LS_Blob_UofU_IS6480_sauofuis6480instdev001_is6480'"
+		},
+		"saw-uofu-is6480-dldwhndev-001-WorkspaceDefaultStorage_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://sa6480dldwhndev001.dfs.core.windows.net"
+		}
+	},
+	"variables": {
+		"workspaceId": "[concat('Microsoft.Synapse/workspaces/', parameters('workspaceName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('workspaceName'), '/DimFilm')]",
+			"type": "Microsoft.Synapse/workspaces/pipelines",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"activities": [
+					{
+						"name": "DimUofUIS6480InstructorDVDRentalFilm",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.10:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "DimFilmClean",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"dimsource": {},
+									"dimsink": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"folder": {
+					"name": "Gold"
+				},
+				"annotations": [],
+				"lastPublishTime": "2023-07-10T01:40:52Z"
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/dataflows/DimFilmClean')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/ExecuteClean')]",
+			"type": "Microsoft.Synapse/workspaces/pipelines",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"activities": [
+					{
+						"name": "ExecuteCleanUIS6480InstructorRentalDBFilmExecute",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.10:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "CleanUofUIS6480InstructorRentalDB_FilmExtract",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"UIS6480InstructorDVDRentalFilm": {},
+									"sink": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"folder": {
+					"name": "1_SourceToBronze"
+				},
+				"annotations": [],
+				"lastPublishTime": "2023-07-12T05:45:35Z"
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/dataflows/CleanUofUIS6480InstructorRentalDB_FilmExtract')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/IS6480_GroupSix_RentalDB_Any_CSV_copy')]",
+			"type": "Microsoft.Synapse/workspaces/pipelines",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"activities": [
+					{
+						"name": "CopyAnyDataset",
+						"description": "Copies any dataset from the RentalDB source given the dataset name as a parameter",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.10:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "DelimitedTextSource",
+								"storeSettings": {
+									"type": "AzureBlobStorageReadSettings",
+									"recursive": true,
+									"wildcardFolderPath": {
+										"value": "@concat('Source/CompanyXYZ/RentalDB/', pipeline().parameters.datasetName)",
+										"type": "Expression"
+									},
+									"wildcardFileName": "*",
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "DelimitedTextReadSettings"
+								}
+							},
+							"sink": {
+								"type": "DelimitedTextSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings",
+									"copyBehavior": "MergeFiles"
+								},
+								"formatSettings": {
+									"type": "DelimitedTextWriteSettings",
+									"quoteAllText": true,
+									"fileExtension": ".txt"
+								}
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "DS_Source_UofU_IS6480_Instructor_RentalDB_Any_CSV",
+								"type": "DatasetReference",
+								"parameters": {
+									"datasetName": "FilmExtract"
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "DS_Bronze_UofU_IS6480_Instructor_RentalDB_Any_CSV",
+								"type": "DatasetReference",
+								"parameters": {
+									"datasetName": {
+										"value": "@pipeline().parameters.datasetName",
+										"type": "Expression"
+									}
+								}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"parameters": {
+					"datasetName": {
+						"type": "string",
+						"defaultValue": "FilmExtract"
+					}
+				},
+				"folder": {
+					"name": "GroupSixProjectMovieDB"
+				},
+				"annotations": [],
+				"lastPublishTime": "2023-07-10T05:59:11Z"
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/datasets/DS_Source_UofU_IS6480_Instructor_RentalDB_Any_CSV')]",
+				"[concat(variables('workspaceId'), '/datasets/DS_Bronze_UofU_IS6480_Instructor_RentalDB_Any_CSV')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/PL_Orchestrate_Extract_Lab3_all')]",
+			"type": "Microsoft.Synapse/workspaces/pipelines",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"activities": [
+					{
+						"name": "ForEach1",
+						"type": "ForEach",
+						"dependsOn": [],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@createArray('payment','film')",
+								"type": "Expression"
+							},
+							"isSequential": true,
+							"activities": [
+								{
+									"name": "Execute Pipeline1",
+									"type": "ExecutePipeline",
+									"dependsOn": [],
+									"userProperties": [],
+									"typeProperties": {
+										"pipeline": {
+											"referenceName": "PL_Source_UofU_IS6480_Instructor_DVDRental_Any_Bronze_UofU_IS6480_Instructor_DVDRental_Any_CSV",
+											"type": "PipelineReference"
+										},
+										"waitOnCompletion": true,
+										"parameters": {
+											"datasetName": {
+												"value": "@item()",
+												"type": "Expression"
+											}
+										}
+									}
+								}
+							]
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"folder": {
+					"name": "Orchestration"
+				},
+				"annotations": [],
+				"lastPublishTime": "2023-07-06T02:07:36Z"
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/pipelines/PL_Source_UofU_IS6480_Instructor_DVDRental_Any_Bronze_UofU_IS6480_Instructor_DVDRental_Any_CSV')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/PL_Silver_FilmAll_Film_Delta')]",
+			"type": "Microsoft.Synapse/workspaces/pipelines",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"activities": [
+					{
+						"name": "Data flow1",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.10:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "CombineDVDRentalFilmRentalDBFilmExtract",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"DVDRentalFilm": {},
+									"RentalDBFilmExtract": {},
+									"sink1": {
+										"datasetName": "FilmExtract"
+									}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"folder": {
+					"name": "3_SilvertoSilver"
+				},
+				"annotations": [],
+				"lastPublishTime": "2023-07-12T06:22:20Z"
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/dataflows/CombineDVDRentalFilmRentalDBFilmExtract')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/PL_Source_UofU_IS6480_Instructor_DVDRental_Actor_Bronze_UofU_IS6480_Instructor_DVD_Rental_Actor_CSV')]",
+			"type": "Microsoft.Synapse/workspaces/pipelines",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"activities": [
+					{
+						"name": "Copy data1",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "DelimitedTextSource",
+								"storeSettings": {
+									"type": "AzureBlobStorageReadSettings",
+									"recursive": true,
+									"wildcardFolderPath": "Source/PostgresTutorial/DVDRental/actor",
+									"wildcardFileName": "*",
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "DelimitedTextReadSettings"
+								}
+							},
+							"sink": {
+								"type": "DelimitedTextSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings"
+								},
+								"formatSettings": {
+									"type": "DelimitedTextWriteSettings",
+									"quoteAllText": true,
+									"fileExtension": ".csv"
+								}
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "DS_Source_UofU_IS6480_Instructor_DVDRental_Actor_CSV",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "DS_Bronze_UofU_IS6480_Instructor_DVDRental_Actor_CSV",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"folder": {
+					"name": "9_Scratch/hnguyen"
+				},
+				"annotations": [],
+				"lastPublishTime": "2023-05-30T01:45:46Z"
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/datasets/DS_Source_UofU_IS6480_Instructor_DVDRental_Actor_CSV')]",
+				"[concat(variables('workspaceId'), '/datasets/DS_Bronze_UofU_IS6480_Instructor_DVDRental_Actor_CSV')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/PL_Source_UofU_IS6480_Instructor_DVDRental_Any_Bronze_UofU_IS6480_Instructor_DVDRental_Any_CSV')]",
+			"type": "Microsoft.Synapse/workspaces/pipelines",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"activities": [
+					{
+						"name": "CopyAnyDataset",
+						"description": "Copies any dataset from the DVDRental source given the dataset name as a parameter",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.00:10:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "DelimitedTextSource",
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": true,
+									"wildcardFolderPath": {
+										"value": "@concat('Source/PostgresTutorial/DVDRental/', pipeline().parameters.datasetName)",
+										"type": "Expression"
+									},
+									"wildcardFileName": "*",
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "DelimitedTextReadSettings"
+								}
+							},
+							"sink": {
+								"type": "DelimitedTextSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings",
+									"copyBehavior": "MergeFiles"
+								},
+								"formatSettings": {
+									"type": "DelimitedTextWriteSettings",
+									"quoteAllText": true,
+									"fileExtension": ".csv"
+								}
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "DS_Bronze_UofU_IS6480_Instructor_DVDRental_Any_CSV",
+								"type": "DatasetReference",
+								"parameters": {
+									"datasetName": "actor"
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "DS_Bronze_UofU_IS6480_Instructor_DVDRental_Any_CSV",
+								"type": "DatasetReference",
+								"parameters": {
+									"datasetName": {
+										"value": "@pipeline().parameters.datasetName",
+										"type": "Expression"
+									}
+								}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"parameters": {
+					"datasetName": {
+						"type": "string",
+						"defaultValue": "actor"
+					}
+				},
+				"folder": {
+					"name": "1_SourceToBronze"
+				},
+				"annotations": [],
+				"lastPublishTime": "2023-07-01T08:08:15Z"
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/datasets/DS_Bronze_UofU_IS6480_Instructor_DVDRental_Any_CSV')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/PL_Source_UofU_IS6480_Instructor_DVDRental_Any_Bronze_UofU_IS6480_Instructor_DVDRental_Any_CSV1')]",
+			"type": "Microsoft.Synapse/workspaces/pipelines",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"activities": [
+					{
+						"name": "CopyAnyDataset",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.10:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "DelimitedTextSource",
+								"storeSettings": {
+									"type": "AzureBlobStorageReadSettings",
+									"recursive": true,
+									"wildcardFolderPath": {
+										"value": "@concat('Source/PostgresTutorial/DVDRental/', pipeline().parameters.datasetName)",
+										"type": "Expression"
+									},
+									"wildcardFileName": "*",
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "DelimitedTextReadSettings"
+								}
+							},
+							"sink": {
+								"type": "DelimitedTextSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings",
+									"copyBehavior": "MergeFiles"
+								},
+								"formatSettings": {
+									"type": "DelimitedTextWriteSettings",
+									"quoteAllText": true,
+									"fileExtension": ".txt"
+								}
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "DS_Source_UofU_IS6480_Instructor_DVDRental_Any_CSV",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "DS_Bronze_UofU_IS6480_Instructor_DVDRental_Any_CSV",
+								"type": "DatasetReference",
+								"parameters": {
+									"datasetName": {
+										"value": "@pipeline().parameters.datasetName",
+										"type": "Expression"
+									}
+								}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"parameters": {
+					"datasetName": {
+						"type": "string",
+						"defaultValue": "actor"
+					}
+				},
+				"folder": {
+					"name": "2_BronzeToSilver"
+				},
+				"annotations": [],
+				"lastPublishTime": "2023-07-10T05:44:56Z"
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/datasets/DS_Source_UofU_IS6480_Instructor_DVDRental_Any_CSV')]",
+				"[concat(variables('workspaceId'), '/datasets/DS_Bronze_UofU_IS6480_Instructor_DVDRental_Any_CSV')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/PL_Source_UofU_IS6480_Instructor_RentalDB_Any_Bronze_UofU_IS6480_Instructor_RentalDB_Any_CSV')]",
+			"type": "Microsoft.Synapse/workspaces/pipelines",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"activities": [
+					{
+						"name": "CopyAnyDataset",
+						"description": "Copies any dataset from the RentalDB source given the dataset name as a parameter",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.10:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "DelimitedTextSource",
+								"storeSettings": {
+									"type": "AzureBlobStorageReadSettings",
+									"recursive": true,
+									"wildcardFolderPath": {
+										"value": "@concat('Source/CompanyXYZ/RentalDB/', pipeline().parameters.datasetName)",
+										"type": "Expression"
+									},
+									"wildcardFileName": "*",
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "DelimitedTextReadSettings"
+								}
+							},
+							"sink": {
+								"type": "DelimitedTextSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings",
+									"copyBehavior": "MergeFiles"
+								},
+								"formatSettings": {
+									"type": "DelimitedTextWriteSettings",
+									"quoteAllText": true,
+									"fileExtension": ".txt"
+								}
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "DS_Source_UofU_IS6480_Instructor_RentalDB_Any_CSV",
+								"type": "DatasetReference",
+								"parameters": {
+									"datasetName": "FilmExtract"
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "DS_Bronze_UofU_IS6480_Instructor_RentalDB_Any_CSV",
+								"type": "DatasetReference",
+								"parameters": {
+									"datasetName": {
+										"value": "@pipeline().parameters.datasetName",
+										"type": "Expression"
+									}
+								}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"parameters": {
+					"datasetName": {
+						"type": "string",
+						"defaultValue": "FilmExtract"
+					}
+				},
+				"folder": {
+					"name": "1_SourceToBronze"
+				},
+				"annotations": [],
+				"lastPublishTime": "2023-07-10T05:59:11Z"
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/datasets/DS_Source_UofU_IS6480_Instructor_RentalDB_Any_CSV')]",
+				"[concat(variables('workspaceId'), '/datasets/DS_Bronze_UofU_IS6480_Instructor_RentalDB_Any_CSV')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/DS_Bronze_UofU_IS6480_Instructor_DVDRental_Actor_CSV')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "saw-uofu-is6480-dldwhndev-001-WorkspaceDefaultStorage",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"folderPath": "Bronze/UofU/IS6480/Instructor/DVDRental/Actor",
+						"fileSystem": "fsuofuis6480dldw001"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/saw-uofu-is6480-dldwhndev-001-WorkspaceDefaultStorage')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/DS_Bronze_UofU_IS6480_Instructor_DVDRental_Any_CSV')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "saw-uofu-is6480-dldwhndev-001-WorkspaceDefaultStorage",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"datasetName": {
+						"type": "string",
+						"defaultValue": "actor"
+					}
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "data.csv",
+						"folderPath": {
+							"value": "@concat('Bronze/UofU/IS6480/Instructor/DVDRental/', dataset().datasetName)",
+							"type": "Expression"
+						},
+						"fileSystem": "fsuofuis6480dldw001"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/saw-uofu-is6480-dldwhndev-001-WorkspaceDefaultStorage')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/DS_Bronze_UofU_IS6480_Instructor_RentalDB_Any_CSV')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "saw-uofu-is6480-dldwhndev-001-WorkspaceDefaultStorage",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"datasetName": {
+						"type": "string",
+						"defaultValue": "FilmExtract"
+					}
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "data.csv",
+						"folderPath": {
+							"value": "@concat('Bronze/UofU/IS6480/Instructor/RentalDB/', dataset().datasetName)",
+							"type": "Expression"
+						},
+						"fileSystem": "fsuofuis6480dldw001"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/saw-uofu-is6480-dldwhndev-001-WorkspaceDefaultStorage')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/DS_Source_UofU_IS6480_Instructor_DVDRental_Actor_CSV')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LS_Blob_UofU_IS6480_sauofuis6480instdev001_is6480",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"folderPath": "Source/PostgresTutorial/DVDRental/actor",
+						"container": "is6480"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/LS_Blob_UofU_IS6480_sauofuis6480instdev001_is6480')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/DS_Source_UofU_IS6480_Instructor_DVDRental_Any_CSV')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LS_Blob_UofU_IS6480_sauofuis6480instdev001_is6480",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"folderPath": "Source/PostgresTutorial/DVDRental",
+						"container": "is6480"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/LS_Blob_UofU_IS6480_sauofuis6480instdev001_is6480')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/DS_Source_UofU_IS6480_Instructor_RentalDB_Any_CSV')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LS_Blob_UofU_IS6480_sauofuis6480instdev001_is6480",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"datasetName": {
+						"type": "string",
+						"defaultValue": "FilmExtract"
+					}
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"folderPath": "Source/CompanyXYZ/RentalDB",
+						"container": "is6480"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/LS_Blob_UofU_IS6480_sauofuis6480instdev001_is6480')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/LS_Blob_UofU_IS6480_sauofuis6480instdev001_is6480')]",
+			"type": "Microsoft.Synapse/workspaces/linkedServices",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobStorage",
+				"typeProperties": {
+					"sasUri": "[parameters('LS_Blob_UofU_IS6480_sauofuis6480instdev001_is6480_sasUri')]"
+				},
+				"connectVia": {
+					"referenceName": "AutoResolveIntegrationRuntime",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/integrationRuntimes/AutoResolveIntegrationRuntime')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/saw-uofu-is6480-dldwhndev-001-WorkspaceDefaultSqlServer')]",
+			"type": "Microsoft.Synapse/workspaces/linkedServices",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"parameters": {
+					"DBName": {
+						"type": "String"
+					}
+				},
+				"annotations": [],
+				"type": "AzureSqlDW",
+				"typeProperties": {
+					"connectionString": "[parameters('saw-uofu-is6480-dldwhndev-001-WorkspaceDefaultSqlServer_connectionString')]"
+				},
+				"connectVia": {
+					"referenceName": "AutoResolveIntegrationRuntime",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/integrationRuntimes/AutoResolveIntegrationRuntime')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/saw-uofu-is6480-dldwhndev-001-WorkspaceDefaultStorage')]",
+			"type": "Microsoft.Synapse/workspaces/linkedServices",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobFS",
+				"typeProperties": {
+					"url": "[parameters('saw-uofu-is6480-dldwhndev-001-WorkspaceDefaultStorage_properties_typeProperties_url')]"
+				},
+				"connectVia": {
+					"referenceName": "AutoResolveIntegrationRuntime",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/integrationRuntimes/AutoResolveIntegrationRuntime')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/AutoResolveIntegrationRuntime')]",
+			"type": "Microsoft.Synapse/workspaces/integrationRuntimes",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"type": "Managed",
+				"typeProperties": {
+					"computeProperties": {
+						"location": "AutoResolve",
+						"dataFlowProperties": {
+							"computeType": "General",
+							"coreCount": 8,
+							"timeToLive": 0
+						}
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/CleanUofUIS6480InstructorDVDRentalFilm')]",
+			"type": "Microsoft.Synapse/workspaces/dataflows",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"linkedService": {
+								"referenceName": "saw-uofu-is6480-dldwhndev-001-WorkspaceDefaultStorage",
+								"type": "LinkedServiceReference"
+							},
+							"name": "UIS6480InstructorDVDRentalFilm"
+						}
+					],
+					"sinks": [
+						{
+							"linkedService": {
+								"referenceName": "saw-uofu-is6480-dldwhndev-001-WorkspaceDefaultStorage",
+								"type": "LinkedServiceReference"
+							},
+							"name": "sink"
+						}
+					],
+					"transformations": [
+						{
+							"name": "select"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          film_id as short,",
+						"          title as string,",
+						"          description as string,",
+						"          release_year as short,",
+						"          language_id as string,",
+						"          rental_duration as short,",
+						"          rental_rate as double,",
+						"          length as integer,",
+						"          replacement_cost as double,",
+						"          rating as string,",
+						"          last_update as string,",
+						"          special_features as string,",
+						"          fulltext as string",
+						"     ),",
+						"     useSchema: false,",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     format: 'delimited',",
+						"     fileSystem: 'fsuofuis6480dldw001',",
+						"     folderPath: 'Bronze/UofU/IS6480/Instructor/DVDRental/film',",
+						"     fileName: 'data.csv',",
+						"     columnDelimiter: ',',",
+						"     escapeChar: '\\\\',",
+						"     quoteChar: '\\\"',",
+						"     columnNamesAsHeader: true) ~> UIS6480InstructorDVDRentalFilm",
+						"UIS6480InstructorDVDRentalFilm select(mapColumn(",
+						"          FilmID = film_id,",
+						"          Title = title,",
+						"          Description = description,",
+						"          ReleaseYear = release_year,",
+						"          LanguageID = language_id,",
+						"          RentalDuration = rental_duration,",
+						"          RentalRate = rental_rate,",
+						"          Length = length,",
+						"          ReplacementCost = replacement_cost,",
+						"          Rating = rating,",
+						"          LastUpdate = last_update,",
+						"          SpecialFeatures = special_features,",
+						"          Fulltext = fulltext",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> select",
+						"select sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     format: 'delta',",
+						"     fileSystem: 'fsuofuis6480dldw001',",
+						"     folderPath: 'Silver/UofU/IS6480/Instructor/DVDRental/Film',",
+						"     overwrite: true,",
+						"     mergeSchema: false,",
+						"     autoCompact: false,",
+						"     optimizedWrite: false,",
+						"     vacuum: 0,",
+						"     deletable: false,",
+						"     insertable: true,",
+						"     updateable: false,",
+						"     upsertable: false,",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> sink"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/saw-uofu-is6480-dldwhndev-001-WorkspaceDefaultStorage')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/CleanUofUIS6480InstructorRentalDB_FilmExtract')]",
+			"type": "Microsoft.Synapse/workspaces/dataflows",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"linkedService": {
+								"referenceName": "saw-uofu-is6480-dldwhndev-001-WorkspaceDefaultStorage",
+								"type": "LinkedServiceReference"
+							},
+							"name": "UIS6480InstructorDVDRentalFilm"
+						}
+					],
+					"sinks": [
+						{
+							"linkedService": {
+								"referenceName": "saw-uofu-is6480-dldwhndev-001-WorkspaceDefaultStorage",
+								"type": "LinkedServiceReference"
+							},
+							"name": "sink"
+						}
+					],
+					"transformations": [
+						{
+							"name": "select"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          MovieID as short,",
+						"          Title as string,",
+						"          Description as string,",
+						"          ReleaseYear as short,",
+						"          LanguageID as string,",
+						"          RentalDuration as string,",
+						"          RentalRate as string,",
+						"          DurationMinutes as short,",
+						"          ReplacementCost as double,",
+						"          Rating as string,",
+						"          LastUpdated as string,",
+						"          SpecialFeatures as string,",
+						"          FullText as string",
+						"     ),",
+						"     useSchema: false,",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     format: 'delimited',",
+						"     fileSystem: 'fsuofuis6480dldw001',",
+						"     folderPath: 'Bronze/UofU/IS6480/Instructor/RentalDB/FilmExtract',",
+						"     fileName: 'data.csv',",
+						"     columnDelimiter: ',',",
+						"     escapeChar: '\\\\',",
+						"     quoteChar: '\\\"',",
+						"     columnNamesAsHeader: true) ~> UIS6480InstructorDVDRentalFilm",
+						"UIS6480InstructorDVDRentalFilm select(mapColumn(",
+						"          MovieID,",
+						"          Title,",
+						"          Description,",
+						"          ReleaseYear,",
+						"          LanguageID,",
+						"          RentalDuration,",
+						"          RentalRate,",
+						"          DurationMinutes,",
+						"          ReplacementCost,",
+						"          Rating,",
+						"          LastUpdated,",
+						"          SpecialFeatures,",
+						"          FullText",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> select",
+						"select sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     format: 'delta',",
+						"     fileSystem: 'fsuofuis6480dldw001',",
+						"     folderPath: 'Silver/UofU/IS6480/Instructor/RentalDB/FilmExtract',",
+						"     overwrite: true,",
+						"     mergeSchema: false,",
+						"     autoCompact: false,",
+						"     optimizedWrite: false,",
+						"     vacuum: 0,",
+						"     deletable: false,",
+						"     insertable: true,",
+						"     updateable: false,",
+						"     upsertable: false,",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> sink"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/saw-uofu-is6480-dldwhndev-001-WorkspaceDefaultStorage')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/CombineDVDRentalFilmRentalDBFilmExtract')]",
+			"type": "Microsoft.Synapse/workspaces/dataflows",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"linkedService": {
+								"referenceName": "saw-uofu-is6480-dldwhndev-001-WorkspaceDefaultStorage",
+								"type": "LinkedServiceReference"
+							},
+							"name": "DVDRentalFilm"
+						},
+						{
+							"linkedService": {
+								"referenceName": "saw-uofu-is6480-dldwhndev-001-WorkspaceDefaultStorage",
+								"type": "LinkedServiceReference"
+							},
+							"name": "RentalDBFilmExtract"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "DS_Source_UofU_IS6480_Instructor_RentalDB_Any_CSV",
+								"type": "DatasetReference"
+							},
+							"name": "sink1"
+						}
+					],
+					"transformations": [
+						{
+							"name": "union1"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          FilmID as short,",
+						"          Title as string,",
+						"          Description as string,",
+						"          ReleasedYear as short,",
+						"          LanguageID as string,",
+						"          RentalDuraion as string,",
+						"          RentalRate as double,",
+						"          Length as short,",
+						"          ReplacementCost as double,",
+						"          Rating as string,",
+						"          LastUpdate as string,",
+						"          SpecialFeatures as string,",
+						"          FullText as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     format: 'delta',",
+						"     fileSystem: 'fsuofuis6480dldw001',",
+						"     folderPath: 'Silver/UofU/IS6480/Instructor/DVDRental/Film') ~> DVDRentalFilm",
+						"source(output(",
+						"          MovieID as short,",
+						"          Title as string,",
+						"          Description as string,",
+						"          ReleaseYear as short,",
+						"          LanguageID as string,",
+						"          RentalDuration as string,",
+						"          RentalRate as double,",
+						"          DurationMinutes as short,",
+						"          ReplacementCost as double,",
+						"          Rating as string,",
+						"          LastUpdated as string,",
+						"          SpecialFeatures as string,",
+						"          FullText as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     format: 'delta',",
+						"     fileSystem: 'fsuofuis6480dldw001',",
+						"     folderPath: 'Silver/UofU/IS6480/Instructor/RentalDB/FilmExtract') ~> RentalDBFilmExtract",
+						"DVDRentalFilm, RentalDBFilmExtract union(byName: false)~> union1",
+						"union1 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> sink1"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/saw-uofu-is6480-dldwhndev-001-WorkspaceDefaultStorage')]",
+				"[concat(variables('workspaceId'), '/datasets/DS_Source_UofU_IS6480_Instructor_RentalDB_Any_CSV')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/DimFilmClean')]",
+			"type": "Microsoft.Synapse/workspaces/dataflows",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"linkedService": {
+								"referenceName": "saw-uofu-is6480-dldwhndev-001-WorkspaceDefaultStorage",
+								"type": "LinkedServiceReference"
+							},
+							"name": "dimsource"
+						}
+					],
+					"sinks": [
+						{
+							"linkedService": {
+								"referenceName": "saw-uofu-is6480-dldwhndev-001-WorkspaceDefaultStorage",
+								"type": "LinkedServiceReference"
+							},
+							"name": "dimsink",
+							"rejectedDataLinkedService": {
+								"referenceName": "saw-uofu-is6480-dldwhndev-001-WorkspaceDefaultStorage",
+								"type": "LinkedServiceReference"
+							}
+						}
+					],
+					"transformations": [
+						{
+							"name": "dimselect"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          film_id as short,",
+						"          title as string,",
+						"          description as string,",
+						"          release_year as short,",
+						"          language_id as boolean,",
+						"          rental_duration as short,",
+						"          rental_rate as double,",
+						"          length as short,",
+						"          replacement_cost as double,",
+						"          rating as string,",
+						"          last_update as string,",
+						"          special_features as string,",
+						"          fulltext as string",
+						"     ),",
+						"     useSchema: false,",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     format: 'delimited',",
+						"     fileSystem: 'fsuofuis6480dldw001',",
+						"     folderPath: 'Bronze/UofU/IS6480/Instructor/DVDRental/film',",
+						"     fileName: 'data.csv',",
+						"     columnDelimiter: ',',",
+						"     escapeChar: '\\\\',",
+						"     quoteChar: '\\\"',",
+						"     columnNamesAsHeader: true) ~> dimsource",
+						"dimsource select(mapColumn(",
+						"          FilmID = film_id,",
+						"          Title = title,",
+						"          Description = description,",
+						"          ReleaseYear = release_year,",
+						"          Rating = rating",
+						"     ),",
+						"     skipDuplicateMapInputs: false,",
+						"     skipDuplicateMapOutputs: false) ~> dimselect",
+						"dimselect sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     format: 'delta',",
+						"     fileSystem: 'fsuofuis6480dldw001',",
+						"     folderPath: 'Gold',",
+						"     mergeSchema: false,",
+						"     autoCompact: false,",
+						"     optimizedWrite: false,",
+						"     vacuum: 0,",
+						"     deletable: false,",
+						"     insertable: true,",
+						"     updateable: false,",
+						"     upsertable: false,",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapOutputs: true,",
+						"     mapColumn(",
+						"          FilmKey = FilmID,",
+						"          FilmID,",
+						"          Title,",
+						"          Description,",
+						"          ReleaseYear,",
+						"          Rating",
+						"     )) ~> dimsink"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/saw-uofu-is6480-dldwhndev-001-WorkspaceDefaultStorage')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/WorkspaceSystemIdentity')]",
+			"type": "Microsoft.Synapse/workspaces/credentials",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"type": "ManagedIdentity",
+				"typeProperties": {}
+			},
+			"dependsOn": []
+		}
+	]
+}
