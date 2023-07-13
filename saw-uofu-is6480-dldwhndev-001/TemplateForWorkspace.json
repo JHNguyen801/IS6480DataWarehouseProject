@@ -128,6 +128,58 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('workspaceName'), '/ExecuteCleanGroupProject')]",
+			"type": "Microsoft.Synapse/workspaces/pipelines",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"activities": [
+					{
+						"name": "ExecuteCleanUIS6480InstructorRentalDBFilmExecute",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.10:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "CleanUofUIS6480InstructorRentalDB_FilmExtract",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"UIS6480InstructorDVDRentalFilm": {},
+									"sink": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"folder": {
+					"name": "GroupSixProjectMovieDB"
+				},
+				"annotations": [],
+				"lastPublishTime": "2023-07-12T05:45:35Z"
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/dataflows/CleanUofUIS6480InstructorRentalDB_FilmExtract')]",
+				"[concat(variables('workspaceId'), '/integrationRuntimes/AutoResolveIntegrationRuntime')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('workspaceName'), '/IS6480_GroupSix_RentalDB_Any_CSV_copy')]",
 			"type": "Microsoft.Synapse/workspaces/pipelines",
 			"apiVersion": "2019-06-01-preview",
