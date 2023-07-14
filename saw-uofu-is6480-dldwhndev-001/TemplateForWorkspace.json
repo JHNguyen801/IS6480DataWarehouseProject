@@ -1193,7 +1193,7 @@
 						"          FullText",
 						"     ),",
 						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true) ~> select",
+						"     skipDuplicateMapOutputs: false) ~> select",
 						"select sink(allowSchemaDrift: true,",
 						"     validateSchema: false,",
 						"     format: 'delta',",
