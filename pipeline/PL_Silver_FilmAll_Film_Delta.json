@@ -17,12 +17,7 @@
 				"typeProperties": {
 					"dataflow": {
 						"referenceName": "CombineDVDRentalFilmRentalDBFilmExtract",
-						"type": "DataFlowReference",
-						"datasetParameters": {
-							"sink1": {
-								"datasetName": "FilmExtract"
-							}
-						}
+						"type": "DataFlowReference"
 					},
 					"compute": {
 						"coreCount": 8,

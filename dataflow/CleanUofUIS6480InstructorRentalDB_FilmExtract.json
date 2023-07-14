@@ -33,7 +33,7 @@
 				"          Description as string,",
 				"          ReleaseYear as short,",
 				"          LanguageID as string,",
-				"          RentalDuration as short,",
+				"          RentalDuration as string,",
 				"          RentalRate as double,",
 				"          DurationMinutes as short,",
 				"          ReplacementCost as double,",
