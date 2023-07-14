@@ -692,7 +692,10 @@
 								"referenceName": "DS_Source_UofU_IS6480_Instructor_RentalDB_Any_CSV",
 								"type": "DatasetReference",
 								"parameters": {
-									"datasetName": "FilmExtract"
+									"datasetName": {
+										"value": "@pipeline().parameters.datasetName",
+										"type": "Expression"
+									}
 								}
 							}
 						],
@@ -923,7 +926,11 @@
 				"typeProperties": {
 					"location": {
 						"type": "AzureBlobStorageLocation",
-						"folderPath": "Source/CompanyXYZ/RentalDB",
+						"fileName": "data.csv",
+						"folderPath": {
+							"value": "@concat('Bronze/UofU/IS6480/Instructor/RentalDB/', dataset().datasetName)",
+							"type": "Expression"
+						},
 						"container": "is6480"
 					},
 					"columnDelimiter": ",",
