@@ -230,6 +230,57 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('workspaceName'), '/ExecuteCleanRentalDB_FilmExtract_copy1')]",
+			"type": "Microsoft.Synapse/workspaces/pipelines",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"activities": [
+					{
+						"name": "ExecuteCleanUIS6480InstructorRentalDBFilmExecute",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.10:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "CleanUofUIS6480InstructorRentalDB_FilmExtract",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"UIS6480InstructorDVDRentalFilm": {},
+									"sink": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"folder": {
+					"name": "Gold_2"
+				},
+				"annotations": [],
+				"lastPublishTime": "2023-07-12T05:45:35Z"
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/dataflows/CleanUofUIS6480InstructorRentalDB_FilmExtract')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('workspaceName'), '/IS6480_GroupSix_RentalDB_Any_CSV_copy')]",
 			"type": "Microsoft.Synapse/workspaces/pipelines",
 			"apiVersion": "2019-06-01-preview",
@@ -678,6 +729,111 @@
 			},
 			"dependsOn": [
 				"[concat(variables('workspaceId'), '/dataflows/CleanUofUIS6480InstructorDVDRentalFilm')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/PL_Source_UofU_IS6480_Instructor_RentalDB_Any_Bronze_UofU_IS6480_Instructor_RentalDB_Actor_CSV')]",
+			"type": "Microsoft.Synapse/workspaces/pipelines",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"activities": [
+					{
+						"name": "CopyAnyDataset",
+						"description": "Copies any dataset from the RentalDB source given the dataset name as a parameter",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.10:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "DelimitedTextSource",
+								"storeSettings": {
+									"type": "AzureBlobStorageReadSettings",
+									"recursive": true,
+									"wildcardFolderPath": {
+										"value": "@concat('Source/CompanyXYZ/RentalDB/', pipeline().parameters.datasetName)",
+										"type": "Expression"
+									},
+									"wildcardFileName": "*",
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "DelimitedTextReadSettings"
+								}
+							},
+							"sink": {
+								"type": "DelimitedTextSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings",
+									"copyBehavior": "MergeFiles"
+								},
+								"formatSettings": {
+									"type": "DelimitedTextWriteSettings",
+									"quoteAllText": true,
+									"fileExtension": ".txt"
+								}
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "DS_Source_UofU_IS6480_Instructor_RentalDB_Any_CSV",
+								"type": "DatasetReference",
+								"parameters": {
+									"datasetName": {
+										"value": "@pipeline().parameters.datasetName",
+										"type": "Expression"
+									}
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "DS_Bronze_UofU_IS6480_Instructor_RentalDB_Any_CSV",
+								"type": "DatasetReference",
+								"parameters": {
+									"datasetName": {
+										"value": "@pipeline().parameters.datasetName",
+										"type": "Expression"
+									}
+								}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"parameters": {
+					"datasetName": {
+						"type": "string",
+						"defaultValue": "FilmExtract"
+					}
+				},
+				"folder": {
+					"name": "Gold_2"
+				},
+				"annotations": [],
+				"lastPublishTime": "2023-07-10T05:59:11Z"
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/datasets/DS_Source_UofU_IS6480_Instructor_RentalDB_Any_CSV')]",
+				"[concat(variables('workspaceId'), '/datasets/DS_Bronze_UofU_IS6480_Instructor_RentalDB_Any_CSV')]"
 			]
 		},
 		{
