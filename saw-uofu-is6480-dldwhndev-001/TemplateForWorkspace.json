@@ -583,6 +583,8 @@
 					{
 						"name": "CopyAnyDataset",
 						"type": "Copy",
+						"state": "Inactive",
+						"onInactiveMarkAs": "Succeeded",
 						"dependsOn": [],
 						"policy": {
 							"timeout": "0.10:00:00",
@@ -650,6 +652,36 @@
 								}
 							}
 						]
+					},
+					{
+						"name": "Data flow1",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "CleanUofUIS6480InstructorDVDRentalFilm",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"UIS6480InstructorDVDRentalFilm": {},
+									"sink": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
 					}
 				],
 				"policy": {
@@ -670,7 +702,8 @@
 			},
 			"dependsOn": [
 				"[concat(variables('workspaceId'), '/datasets/DS_Source_UofU_IS6480_Instructor_DVDRental_Any_CSV')]",
-				"[concat(variables('workspaceId'), '/datasets/DS_Bronze_UofU_IS6480_Instructor_DVDRental_Any_CSV')]"
+				"[concat(variables('workspaceId'), '/datasets/DS_Bronze_UofU_IS6480_Instructor_DVDRental_Any_CSV')]",
+				"[concat(variables('workspaceId'), '/dataflows/CleanUofUIS6480InstructorDVDRentalFilm')]"
 			]
 		},
 		{
