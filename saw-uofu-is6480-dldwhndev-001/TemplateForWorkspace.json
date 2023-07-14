@@ -124,8 +124,7 @@
 				"lastPublishTime": "2023-07-12T05:45:35Z"
 			},
 			"dependsOn": [
-				"[concat(variables('workspaceId'), '/dataflows/CleanUofUIS6480InstructorRentalDB_FilmExtract')]",
-				"[concat(variables('workspaceId'), '/integrationRuntimes/AutoResolveIntegrationRuntime')]"
+				"[concat(variables('workspaceId'), '/dataflows/CleanUofUIS6480InstructorRentalDB_FilmExtract')]"
 			]
 		},
 		{
@@ -362,9 +361,7 @@
 								"datasetParameters": {
 									"DVDRentalFilm": {},
 									"RentalDBFilmExtract": {},
-									"sink1": {
-										"datasetName": "FilmExtract"
-									}
+									"sink1": {}
 								}
 							},
 							"staging": {},
@@ -1159,7 +1156,7 @@
 						"          Description as string,",
 						"          ReleaseYear as short,",
 						"          LanguageID as string,",
-						"          RentalDuration as short,",
+						"          RentalDuration as string,",
 						"          RentalRate as double,",
 						"          DurationMinutes as short,",
 						"          ReplacementCost as double,",
