@@ -35,7 +35,7 @@
 				"          language_id as string,",
 				"          rental_duration as short,",
 				"          rental_rate as double,",
-				"          length as integer,",
+				"          length as short,",
 				"          replacement_cost as double,",
 				"          rating as string,",
 				"          last_update as string,",
