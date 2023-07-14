@@ -124,7 +124,8 @@
 				"lastPublishTime": "2023-07-12T05:45:35Z"
 			},
 			"dependsOn": [
-				"[concat(variables('workspaceId'), '/dataflows/CleanUofUIS6480InstructorRentalDB_FilmExtract')]"
+				"[concat(variables('workspaceId'), '/dataflows/CleanUofUIS6480InstructorRentalDB_FilmExtract')]",
+				"[concat(variables('workspaceId'), '/integrationRuntimes/AutoResolveIntegrationRuntime')]"
 			]
 		},
 		{
@@ -1158,7 +1159,7 @@
 						"          Description as string,",
 						"          ReleaseYear as short,",
 						"          LanguageID as string,",
-						"          RentalDuration as string,",
+						"          RentalDuration as short,",
 						"          RentalRate as double,",
 						"          DurationMinutes as short,",
 						"          ReplacementCost as double,",
