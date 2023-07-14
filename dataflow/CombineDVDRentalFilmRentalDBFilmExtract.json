@@ -81,7 +81,7 @@
 				"     validateSchema: false,",
 				"     format: 'delta',",
 				"     fileSystem: 'fsuofuis6480dldw001',",
-				"     folderPath: 'Silver/NewCo/Flim',",
+				"     folderPath: 'Silver/NewCo/Film',",
 				"     mergeSchema: false,",
 				"     autoCompact: false,",
 				"     optimizedWrite: false,",
