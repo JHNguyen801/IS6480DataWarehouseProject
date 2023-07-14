@@ -1069,7 +1069,7 @@
 				"parameters": {
 					"datasetName": {
 						"type": "string",
-						"defaultValue": "FilmExtract"
+						"defaultValue": "ActorExtract"
 					}
 				},
 				"annotations": [],
@@ -1079,7 +1079,7 @@
 						"type": "AzureBlobFSLocation",
 						"fileName": "data.csv",
 						"folderPath": {
-							"value": "@concat('Bronze/UofU/IS6480/Instructor/RentalDB/', dataset().datasetName)",
+							"value": "@concat('Gold/UofU/IS6480/Instructor/RentalDB/', dataset().datasetName)",
 							"type": "Expression"
 						},
 						"fileSystem": "fsuofuis6480dldw001"
@@ -1186,7 +1186,7 @@
 						"type": "AzureBlobStorageLocation",
 						"fileName": "data.csv",
 						"folderPath": {
-							"value": "@concat('Bronze/UofU/IS6480/Instructor/RentalDB/', dataset().datasetName)",
+							"value": "@concat('Gold/UofU/IS6480/Instructor/RentalDB/', dataset().datasetName)",
 							"type": "Expression"
 						},
 						"container": "is6480"
