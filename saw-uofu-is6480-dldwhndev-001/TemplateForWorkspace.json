@@ -456,7 +456,7 @@
 							"source": {
 								"type": "DelimitedTextSource",
 								"storeSettings": {
-									"type": "AzureBlobFSReadSettings",
+									"type": "AzureBlobStorageReadSettings",
 									"recursive": true,
 									"wildcardFolderPath": {
 										"value": "@concat('Source/PostgresTutorial/DVDRental/', pipeline().parameters.datasetName)",
@@ -493,11 +493,9 @@
 						},
 						"inputs": [
 							{
-								"referenceName": "DS_Bronze_UofU_IS6480_Instructor_DVDRental_Any_CSV",
+								"referenceName": "DS_Source_UofU_IS6480_Instructor_DVDRental_Actor_CSV",
 								"type": "DatasetReference",
-								"parameters": {
-									"datasetName": "actor"
-								}
+								"parameters": {}
 							}
 						],
 						"outputs": [
@@ -531,6 +529,7 @@
 				"lastPublishTime": "2023-07-01T08:08:15Z"
 			},
 			"dependsOn": [
+				"[concat(variables('workspaceId'), '/datasets/DS_Source_UofU_IS6480_Instructor_DVDRental_Actor_CSV')]",
 				"[concat(variables('workspaceId'), '/datasets/DS_Bronze_UofU_IS6480_Instructor_DVDRental_Any_CSV')]"
 			]
 		},
