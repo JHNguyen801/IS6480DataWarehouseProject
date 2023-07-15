@@ -75,7 +75,7 @@
 				"     validateSchema: false,",
 				"     format: 'delta',",
 				"     fileSystem: 'fsuofuis6480dldw001',",
-				"     folderPath: 'Silver/UofU/IS6480/Instructor/DVDRental/Film',",
+				"     folderPath: 'Silver/UofU/IS6480/Instructor/RentalDB/FilmExtract',",
 				"     overwrite: true,",
 				"     mergeSchema: false,",
 				"     autoCompact: false,",
