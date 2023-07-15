@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "ExecuteCleanUIS6480InstructorRentalDBFilmExecute",
+				"name": "ExecuteCleanUIS6480InstructorRentalDBActor",
 				"type": "ExecuteDataFlow",
 				"dependsOn": [],
 				"policy": {
