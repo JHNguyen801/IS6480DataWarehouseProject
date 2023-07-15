@@ -18,7 +18,7 @@
 				"type": "AzureBlobStorageLocation",
 				"fileName": "data.csv",
 				"folderPath": {
-					"value": "@concat('Gold/UofU/IS6480/Instructor/RentalDB/', dataset().datasetName)",
+					"value": "@concat('Bronze/UofU/IS6480/Instructor/RentalDB/', dataset().datasetName)",
 					"type": "Expression"
 				},
 				"container": "is6480"
