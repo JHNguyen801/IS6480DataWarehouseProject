@@ -1,0 +1,93 @@
+{
+	"name": "PL1_Source_Instructor_DVDRental_Any_CSV",
+	"properties": {
+		"activities": [
+			{
+				"name": "CopyAnyDataset",
+				"description": "Copies any dataset from the DVDRental source given the dataset name as a parameter",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.00:10:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "AzureBlobFSReadSettings",
+							"recursive": true,
+							"wildcardFolderPath": {
+								"value": "@concat('Source/PostgresTutorial/DVDRental/', pipeline().parameters.datasetName)",
+								"type": "Expression"
+							},
+							"wildcardFileName": "*",
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
+					},
+					"sink": {
+						"type": "DelimitedTextSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings",
+							"copyBehavior": "MergeFiles"
+						},
+						"formatSettings": {
+							"type": "DelimitedTextWriteSettings",
+							"quoteAllText": true,
+							"fileExtension": ".csv"
+						}
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "DS_Bronze_UofU_IS6480_Instructor_DVDRental_Any_CSV",
+						"type": "DatasetReference",
+						"parameters": {
+							"datasetName": "actor"
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "DS_Bronze_UofU_IS6480_Instructor_DVDRental_Any_CSV",
+						"type": "DatasetReference",
+						"parameters": {
+							"datasetName": {
+								"value": "@pipeline().parameters.datasetName",
+								"type": "Expression"
+							}
+						}
+					}
+				]
+			}
+		],
+		"parameters": {
+			"datasetName": {
+				"type": "string",
+				"defaultValue": "actor"
+			}
+		},
+		"folder": {
+			"name": "Gold_2"
+		},
+		"annotations": [],
+		"lastPublishTime": "2023-07-01T08:08:15Z"
+	},
+	"type": "Microsoft.Synapse/workspaces/pipelines"
+}
