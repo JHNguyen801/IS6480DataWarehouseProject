@@ -45,12 +45,13 @@
 						"userProperties": [],
 						"typeProperties": {
 							"dataflow": {
-								"referenceName": "Dataflow1",
+								"referenceName": "DataflowChallenge_Backup",
 								"type": "DataFlowReference",
 								"parameters": {},
 								"datasetParameters": {
 									"sourceActor": {},
 									"sourceFilm": {},
+									"source1": {},
 									"sink1": {},
 									"sink2": {}
 								}
@@ -75,7 +76,7 @@
 				"lastPublishTime": "2023-07-12T05:45:35Z"
 			},
 			"dependsOn": [
-				"[concat(variables('workspaceId'), '/dataflows/Dataflow1')]"
+				"[concat(variables('workspaceId'), '/dataflows/DataflowChallenge_Backup')]"
 			]
 		},
 		{
@@ -98,12 +99,13 @@
 						"userProperties": [],
 						"typeProperties": {
 							"dataflow": {
-								"referenceName": "Dataflow1",
+								"referenceName": "DataflowChallenge_Backup",
 								"type": "DataFlowReference",
 								"parameters": {},
 								"datasetParameters": {
 									"sourceActor": {},
 									"sourceFilm": {},
+									"source1": {},
 									"sink1": {},
 									"sink2": {}
 								}
@@ -128,7 +130,8 @@
 				"lastPublishTime": "2023-07-12T05:45:35Z"
 			},
 			"dependsOn": [
-				"[concat(variables('workspaceId'), '/dataflows/Dataflow1')]"
+				"[concat(variables('workspaceId'), '/dataflows/DataflowChallenge_Backup')]",
+				"[concat(variables('workspaceId'), '/integrationRuntimes/AutoResolveIntegrationRuntime')]"
 			]
 		},
 		{
@@ -1815,7 +1818,7 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('workspaceName'), '/Dataflow1')]",
+			"name": "[concat(parameters('workspaceName'), '/DataflowChallenge_Backup')]",
 			"type": "Microsoft.Synapse/workspaces/dataflows",
 			"apiVersion": "2019-06-01-preview",
 			"properties": {
@@ -1835,6 +1838,9 @@
 								"type": "LinkedServiceReference"
 							},
 							"name": "sourceFilm"
+						},
+						{
+							"name": "source1"
 						}
 					],
 					"sinks": [
@@ -1903,6 +1909,8 @@
 						"     escapeChar: '\\\\',",
 						"     quoteChar: '\\\"',",
 						"     columnNamesAsHeader: true) ~> sourceFilm",
+						"source(allowSchemaDrift: true,",
+						"     validateSchema: false) ~> source1",
 						"sourceActor select(mapColumn(",
 						"          ActorID = actor_id,",
 						"          FirstName = first_name,",
