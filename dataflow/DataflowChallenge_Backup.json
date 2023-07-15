@@ -10,20 +10,6 @@
 						"type": "LinkedServiceReference"
 					},
 					"name": "sourceActor"
-				},
-				{
-					"linkedService": {
-						"referenceName": "saw-uofu-is6480-dldwhndev-001-WorkspaceDefaultStorage",
-						"type": "LinkedServiceReference"
-					},
-					"name": "sourceFilm"
-				},
-				{
-					"linkedService": {
-						"referenceName": "saw-uofu-is6480-dldwhndev-001-WorkspaceDefaultStorage",
-						"type": "LinkedServiceReference"
-					},
-					"name": "sourceFilmActor"
 				}
 			],
 			"sinks": [
@@ -33,20 +19,6 @@
 						"type": "LinkedServiceReference"
 					},
 					"name": "sink1"
-				},
-				{
-					"linkedService": {
-						"referenceName": "saw-uofu-is6480-dldwhndev-001-WorkspaceDefaultStorage",
-						"type": "LinkedServiceReference"
-					},
-					"name": "sink2"
-				},
-				{
-					"linkedService": {
-						"referenceName": "saw-uofu-is6480-dldwhndev-001-WorkspaceDefaultStorage",
-						"type": "LinkedServiceReference"
-					},
-					"name": "sink3"
 				}
 			],
 			"transformations": [
@@ -55,18 +27,6 @@
 				},
 				{
 					"name": "surrogateKey1"
-				},
-				{
-					"name": "select2"
-				},
-				{
-					"name": "surrogateKey2"
-				},
-				{
-					"name": "select3"
-				},
-				{
-					"name": "surrogateKey3"
 				}
 			],
 			"scriptLines": [
@@ -88,50 +48,6 @@
 				"     escapeChar: '\\\\',",
 				"     quoteChar: '\\\"',",
 				"     columnNamesAsHeader: true) ~> sourceActor",
-				"source(output(",
-				"          film_id as short,",
-				"          title as string,",
-				"          description as string,",
-				"          release_year as short,",
-				"          language_id as string,",
-				"          rental_duration as short,",
-				"          rental_rate as double,",
-				"          length as short,",
-				"          replacement_cost as double,",
-				"          rating as string,",
-				"          last_update as string,",
-				"          special_features as string,",
-				"          fulltext as string",
-				"     ),",
-				"     useSchema: false,",
-				"     allowSchemaDrift: true,",
-				"     validateSchema: false,",
-				"     ignoreNoFilesFound: false,",
-				"     format: 'delimited',",
-				"     fileSystem: 'fsuofuis6480dldw001',",
-				"     folderPath: 'Gold/UofU/IS6480/Instructor/RentalDB/film',",
-				"     fileName: 'data.csv',",
-				"     columnDelimiter: ',',",
-				"     escapeChar: '\\\\',",
-				"     quoteChar: '\\\"',",
-				"     columnNamesAsHeader: true) ~> sourceFilm",
-				"source(output(",
-				"          actor_id as short,",
-				"          film_id as short,",
-				"          last_update as string",
-				"     ),",
-				"     useSchema: false,",
-				"     allowSchemaDrift: true,",
-				"     validateSchema: false,",
-				"     ignoreNoFilesFound: false,",
-				"     format: 'delimited',",
-				"     fileSystem: 'fsuofuis6480dldw001',",
-				"     folderPath: 'Gold/UofU/IS6480/Instructor/RentalDB/film_actor',",
-				"     fileName: 'data.csv',",
-				"     columnDelimiter: ',',",
-				"     escapeChar: '\\\\',",
-				"     quoteChar: '\\\"',",
-				"     columnNamesAsHeader: true) ~> sourceFilmActor",
 				"sourceActor select(mapColumn(",
 				"          ActorID = actor_id,",
 				"          FirstName = first_name,",
@@ -142,21 +58,6 @@
 				"select1 keyGenerate(output(ActorKey as long),",
 				"     startAt: 1L,",
 				"     stepValue: 1L) ~> surrogateKey1",
-				"sourceFilm select(mapColumn(",
-				"          actor_id,",
-				"          film_id,",
-				"          last_update",
-				"     ),",
-				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> select2",
-				"select2 keyGenerate(output(FilmKey as long),",
-				"     startAt: 1L,",
-				"     stepValue: 1L) ~> surrogateKey2",
-				"sourceFilmActor select(skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> select3",
-				"select3 keyGenerate(output(ActorKey as long),",
-				"     startAt: 1L,",
-				"     stepValue: 1L) ~> surrogateKey3",
 				"surrogateKey1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     format: 'delta',",
@@ -180,49 +81,7 @@
 				"          FirstName,",
 				"          LastName,",
 				"          ActorKey",
-				"     )) ~> sink1",
-				"surrogateKey2 sink(allowSchemaDrift: true,",
-				"     validateSchema: false,",
-				"     format: 'delta',",
-				"     fileSystem: 'fsuofuis6480dldw001',",
-				"     folderPath: 'Gold/UofU/IS6480/Instructor/RentalDB/FilmDim',",
-				"     mergeSchema: false,",
-				"     autoCompact: false,",
-				"     optimizedWrite: false,",
-				"     vacuum: 0,",
-				"     deletable: false,",
-				"     insertable: true,",
-				"     updateable: false,",
-				"     upsertable: false,",
-				"     umask: 0022,",
-				"     preCommands: [],",
-				"     postCommands: [],",
-				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true,",
-				"     mapColumn(",
-				"          actor_id,",
-				"          film_id,",
-				"          last_update,",
-				"          FilmKey",
-				"     )) ~> sink2",
-				"surrogateKey3 sink(allowSchemaDrift: true,",
-				"     validateSchema: false,",
-				"     format: 'delta',",
-				"     fileSystem: 'fsuofuis6480dldw001',",
-				"     folderPath: 'Gold/UofU/IS6480/Instructor/RentalDB/DimFilmActor',",
-				"     mergeSchema: false,",
-				"     autoCompact: false,",
-				"     optimizedWrite: false,",
-				"     vacuum: 0,",
-				"     deletable: false,",
-				"     insertable: true,",
-				"     updateable: false,",
-				"     upsertable: false,",
-				"     umask: 0022,",
-				"     preCommands: [],",
-				"     postCommands: [],",
-				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> sink3"
+				"     )) ~> sink1"
 			]
 		}
 	}
