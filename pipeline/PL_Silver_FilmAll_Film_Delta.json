@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "Data flow1",
+				"name": "Data flow Union Sources",
 				"type": "ExecuteDataFlow",
 				"dependsOn": [],
 				"policy": {
