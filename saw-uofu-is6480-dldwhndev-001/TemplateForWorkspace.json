@@ -1142,7 +1142,7 @@
 						"type": "AzureBlobFSLocation",
 						"fileName": "data.csv",
 						"folderPath": {
-							"value": "@concat('Gold/UofU/IS6480/Instructor/DVDRental/', dataset().datasetName)",
+							"value": "@concat('Bronze/UofU/IS6480/Instructor/DVDRental/', dataset().datasetName)",
 							"type": "Expression"
 						},
 						"fileSystem": "fsuofuis6480dldw001"
