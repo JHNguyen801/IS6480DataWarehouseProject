@@ -28,6 +28,9 @@
 			"transformations": [
 				{
 					"name": "dimselect"
+				},
+				{
+					"name": "surrogateKey1"
 				}
 			],
 			"scriptLines": [
@@ -67,7 +70,10 @@
 				"     ),",
 				"     skipDuplicateMapInputs: false,",
 				"     skipDuplicateMapOutputs: false) ~> dimselect",
-				"dimselect sink(allowSchemaDrift: true,",
+				"dimselect keyGenerate(output(FilmKey as long),",
+				"     startAt: 1L,",
+				"     stepValue: 1L) ~> surrogateKey1",
+				"surrogateKey1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     format: 'delta',",
 				"     fileSystem: 'fsuofuis6480dldw001',",
@@ -85,12 +91,12 @@
 				"     postCommands: [],",
 				"     skipDuplicateMapOutputs: true,",
 				"     mapColumn(",
-				"          FilmKey = FilmID,",
 				"          FilmID,",
 				"          Title,",
 				"          Description,",
 				"          ReleaseYear,",
-				"          Rating",
+				"          Rating,",
+				"          FilmKey",
 				"     )) ~> dimsink"
 			]
 		}
