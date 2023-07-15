@@ -1874,7 +1874,7 @@
 						"     validateSchema: false,",
 						"     format: 'delta',",
 						"     fileSystem: 'fsuofuis6480dldw001',",
-						"     folderPath: 'Gold/UofU/IS6480/Instructor/RentalDB/ActorExtract',",
+						"     folderPath: 'Gold/UofU/IS6480/Instructor/RentalDB/DimActor',",
 						"     mergeSchema: false,",
 						"     autoCompact: false,",
 						"     optimizedWrite: false,",
