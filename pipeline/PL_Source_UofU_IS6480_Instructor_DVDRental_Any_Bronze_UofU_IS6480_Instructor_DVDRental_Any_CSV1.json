@@ -16,7 +16,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataflow": {
-						"referenceName": "CleanUofUIS6480InstructorDVDRentalFilm",
+						"referenceName": "CleanUofUIS6480InstructorRentalDB_FilmExtract",
 						"type": "DataFlowReference"
 					},
 					"compute": {
