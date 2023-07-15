@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "DimUofUIS6480InstructorDVDRentalFilm",
+				"name": "DimActor",
 				"type": "ExecuteDataFlow",
 				"dependsOn": [],
 				"policy": {

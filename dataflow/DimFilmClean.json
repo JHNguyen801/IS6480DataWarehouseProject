@@ -9,7 +9,7 @@
 						"referenceName": "saw-uofu-is6480-dldwhndev-001-WorkspaceDefaultStorage",
 						"type": "LinkedServiceReference"
 					},
-					"name": "dimsource"
+					"name": "dimActorSource"
 				}
 			],
 			"sinks": [
@@ -30,24 +30,15 @@
 					"name": "dimselect"
 				},
 				{
-					"name": "surrogateKey1"
+					"name": "surrogateKey"
 				}
 			],
 			"scriptLines": [
 				"source(output(",
-				"          film_id as short,",
-				"          title as string,",
-				"          description as string,",
-				"          release_year as short,",
-				"          language_id as boolean,",
-				"          rental_duration as short,",
-				"          rental_rate as double,",
-				"          length as short,",
-				"          replacement_cost as double,",
-				"          rating as string,",
-				"          last_update as string,",
-				"          special_features as string,",
-				"          fulltext as string",
+				"          actor_id as short,",
+				"          first_name as string,",
+				"          last_name as string,",
+				"          last_update as string",
 				"     ),",
 				"     useSchema: false,",
 				"     allowSchemaDrift: true,",
@@ -55,25 +46,23 @@
 				"     ignoreNoFilesFound: false,",
 				"     format: 'delimited',",
 				"     fileSystem: 'fsuofuis6480dldw001',",
-				"     folderPath: 'Bronze/UofU/IS6480/Instructor/DVDRental/film',",
+				"     folderPath: 'Gold/UofU/IS6480/Instructor/RentalDB/actor',",
 				"     fileName: 'data.csv',",
 				"     columnDelimiter: ',',",
 				"     escapeChar: '\\\\',",
 				"     quoteChar: '\\\"',",
-				"     columnNamesAsHeader: true) ~> dimsource",
-				"dimsource select(mapColumn(",
-				"          FilmID = film_id,",
-				"          Title = title,",
-				"          Description = description,",
-				"          ReleaseYear = release_year,",
-				"          Rating = rating",
+				"     columnNamesAsHeader: true) ~> dimActorSource",
+				"dimActorSource select(mapColumn(",
+				"          ActorID = actor_id,",
+				"          FirstName = first_name,",
+				"          LastName = last_name",
 				"     ),",
 				"     skipDuplicateMapInputs: false,",
 				"     skipDuplicateMapOutputs: false) ~> dimselect",
-				"dimselect keyGenerate(output(FilmKey as long),",
+				"dimselect keyGenerate(output(ActorKey as long),",
 				"     startAt: 1L,",
-				"     stepValue: 1L) ~> surrogateKey1",
-				"surrogateKey1 sink(allowSchemaDrift: true,",
+				"     stepValue: 1L) ~> surrogateKey",
+				"surrogateKey sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     format: 'delta',",
 				"     fileSystem: 'fsuofuis6480dldw001',",
@@ -91,12 +80,10 @@
 				"     postCommands: [],",
 				"     skipDuplicateMapOutputs: true,",
 				"     mapColumn(",
-				"          FilmID,",
-				"          Title,",
-				"          Description,",
-				"          ReleaseYear,",
-				"          Rating,",
-				"          FilmKey",
+				"          ActorID,",
+				"          FirstName,",
+				"          LastName,",
+				"          ActorKey",
 				"     )) ~> dimsink"
 			]
 		}
