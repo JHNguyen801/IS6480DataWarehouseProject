@@ -2498,6 +2498,118 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('workspaceName'), '/DimRentalDate')]",
+			"type": "Microsoft.Synapse/workspaces/dataflows",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"linkedService": {
+								"referenceName": "saw-uofu-is6480-dldwhndev-001-WorkspaceDefaultStorage",
+								"type": "LinkedServiceReference"
+							},
+							"name": "sourceRental"
+						}
+					],
+					"sinks": [
+						{
+							"linkedService": {
+								"referenceName": "saw-uofu-is6480-dldwhndev-001-WorkspaceDefaultStorage",
+								"type": "LinkedServiceReference"
+							},
+							"name": "dimsink",
+							"rejectedDataLinkedService": {
+								"referenceName": "saw-uofu-is6480-dldwhndev-001-WorkspaceDefaultStorage",
+								"type": "LinkedServiceReference"
+							}
+						}
+					],
+					"transformations": [
+						{
+							"name": "dimselect"
+						},
+						{
+							"name": "surrogateKey"
+						},
+						{
+							"name": "derivedDate"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          rental_id as short,",
+						"          rental_date as date,",
+						"          inventory_id as short,",
+						"          customer_id as short,",
+						"          return_date as date,",
+						"          staff_id as short,",
+						"          last_update as date",
+						"     ),",
+						"     useSchema: false,",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     format: 'delimited',",
+						"     fileSystem: 'fsuofuis6480dldw001',",
+						"     folderPath: 'IS6480_DW_GroupSix_Project/rental',",
+						"     fileName: 'data.csv',",
+						"     columnDelimiter: ',',",
+						"     escapeChar: '\\\\',",
+						"     quoteChar: '\\\"',",
+						"     columnNamesAsHeader: true) ~> sourceRental",
+						"sourceRental select(mapColumn(",
+						"          RentalID = rental_id,",
+						"          RentalDate = rental_date,",
+						"          InventoryID = inventory_id,",
+						"          CustomerID = customer_id,",
+						"          ReturnDate = return_date",
+						"     ),",
+						"     skipDuplicateMapInputs: false,",
+						"     skipDuplicateMapOutputs: false) ~> dimselect",
+						"dimselect keyGenerate(output(DateKey as long),",
+						"     startAt: 1L,",
+						"     stepValue: 1L) ~> surrogateKey",
+						"surrogateKey derive(Month = month(RentalDate),",
+						"          Day = dayOfWeek(RentalDate),",
+						"          WeekOfYear = weekOfYear(RentalDate),",
+						"     partitionBy('hash', 1)) ~> derivedDate",
+						"derivedDate sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     format: 'delta',",
+						"     fileSystem: 'fsuofuis6480dldw001',",
+						"     folderPath: 'IS6480_DW_GroupSix_Project/DimDate',",
+						"     mergeSchema: false,",
+						"     autoCompact: false,",
+						"     optimizedWrite: false,",
+						"     vacuum: 0,",
+						"     deletable: false,",
+						"     insertable: true,",
+						"     updateable: false,",
+						"     upsertable: false,",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     mapColumn(",
+						"          RentalID,",
+						"          RentalDate,",
+						"          InventoryID,",
+						"          CustomerID,",
+						"          ReturnDate,",
+						"          DateKey,",
+						"          DayOfWeek = Day,",
+						"          WeekOfYear,",
+						"          Month",
+						"     )) ~> dimsink"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/saw-uofu-is6480-dldwhndev-001-WorkspaceDefaultStorage')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('workspaceName'), '/DimSelectCustomer')]",
 			"type": "Microsoft.Synapse/workspaces/dataflows",
 			"apiVersion": "2019-06-01-preview",
