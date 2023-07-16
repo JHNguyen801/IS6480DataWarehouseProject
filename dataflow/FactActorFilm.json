@@ -1,6 +1,9 @@
 {
 	"name": "FactActorFilm",
 	"properties": {
+		"folder": {
+			"name": "Lab2Challenge"
+		},
 		"type": "MappingDataFlow",
 		"typeProperties": {
 			"sources": [
