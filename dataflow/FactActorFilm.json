@@ -131,10 +131,11 @@
 				"     preCommands: [],",
 				"     postCommands: [],",
 				"     mapColumn(",
+				"          ActorKey,",
+				"          FilmKey,",
 				"          ActorID,",
 				"          FirstName,",
 				"          LastName,",
-				"          ActorKey,",
 				"          Title,",
 				"          Description,",
 				"          Release_year,",
@@ -146,8 +147,7 @@
 				"          Rating,",
 				"          LastUpdate,",
 				"          SpecialFeatures,",
-				"          Fulltext,",
-				"          FilmKey",
+				"          Fulltext",
 				"     )) ~> sink1"
 			]
 		}
