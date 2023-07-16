@@ -50,10 +50,7 @@
 								"parameters": {},
 								"datasetParameters": {
 									"sourceActor": {},
-									"sourceFilm": {},
-									"sourceFilmActor": {},
-									"sink1": {},
-									"sink2": {}
+									"sink1": {}
 								}
 							},
 							"staging": {},
@@ -86,7 +83,7 @@
 			"properties": {
 				"activities": [
 					{
-						"name": "ExecuteCleanUIS6480InstructorRentalDBFilmExecute",
+						"name": "ExecuteCleanUIS6480InstructorRentalDBActor",
 						"type": "ExecuteDataFlow",
 						"dependsOn": [],
 						"policy": {
@@ -104,10 +101,7 @@
 								"parameters": {},
 								"datasetParameters": {
 									"sourceActor": {},
-									"sourceFilm": {},
-									"sourceFilmActor": {},
-									"sink1": {},
-									"sink2": {}
+									"sink1": {}
 								}
 							},
 							"staging": {},
@@ -159,8 +153,10 @@
 								"datasetParameters": {
 									"sourceActor": {},
 									"sourceFilm": {},
+									"sourceFilmActor": {},
 									"sink1": {},
-									"sink2": {}
+									"sink2": {},
+									"sink3": {}
 								}
 							},
 							"staging": {},
@@ -183,7 +179,8 @@
 				"lastPublishTime": "2023-07-12T05:45:35Z"
 			},
 			"dependsOn": [
-				"[concat(variables('workspaceId'), '/dataflows/DimExtract')]"
+				"[concat(variables('workspaceId'), '/dataflows/DimExtract')]",
+				"[concat(variables('workspaceId'), '/integrationRuntimes/AutoResolveIntegrationRuntime')]"
 			]
 		},
 		{
@@ -193,7 +190,7 @@
 			"properties": {
 				"activities": [
 					{
-						"name": "DimUofUIS6480InstructorDVDRentalFilm",
+						"name": "DimActor",
 						"type": "ExecuteDataFlow",
 						"dependsOn": [],
 						"policy": {
@@ -210,7 +207,7 @@
 								"type": "DataFlowReference",
 								"parameters": {},
 								"datasetParameters": {
-									"dimsource": {},
+									"dimActorSource": {},
 									"dimsink": {}
 								}
 							},
@@ -261,7 +258,7 @@
 								"type": "DataFlowReference",
 								"parameters": {},
 								"datasetParameters": {
-									"dimsource": {},
+									"dimActorSource": {},
 									"dimsink": {}
 								}
 							},
@@ -439,6 +436,59 @@
 			},
 			"dependsOn": [
 				"[concat(variables('workspaceId'), '/dataflows/CleanUofUIS6480InstructorRentalDB_FilmExtract')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/FactActorFilm')]",
+			"type": "Microsoft.Synapse/workspaces/pipelines",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"activities": [
+					{
+						"name": "Data flow Union Sources",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.10:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "FactActorFilm",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"sourceActor": {},
+									"sourceFilm": {},
+									"sourceFilmActor": {},
+									"sink1": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"folder": {
+					"name": "2_Gold"
+				},
+				"annotations": [],
+				"lastPublishTime": "2023-07-12T06:22:20Z"
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/dataflows/FactActorFilm')]"
 			]
 		},
 		{
@@ -1830,6 +1880,100 @@
 								"type": "LinkedServiceReference"
 							},
 							"name": "sourceActor"
+						}
+					],
+					"sinks": [
+						{
+							"linkedService": {
+								"referenceName": "saw-uofu-is6480-dldwhndev-001-WorkspaceDefaultStorage",
+								"type": "LinkedServiceReference"
+							},
+							"name": "sink1"
+						}
+					],
+					"transformations": [
+						{
+							"name": "select1"
+						},
+						{
+							"name": "surrogateKey1"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          actor_id as short,",
+						"          first_name as string,",
+						"          last_name as string,",
+						"          last_update as string",
+						"     ),",
+						"     useSchema: false,",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     format: 'delimited',",
+						"     fileSystem: 'fsuofuis6480dldw001',",
+						"     folderPath: 'Gold/UofU/IS6480/Instructor/RentalDB/actor',",
+						"     fileName: 'data.csv',",
+						"     columnDelimiter: ',',",
+						"     escapeChar: '\\\\',",
+						"     quoteChar: '\\\"',",
+						"     columnNamesAsHeader: true) ~> sourceActor",
+						"sourceActor select(mapColumn(",
+						"          ActorID = actor_id,",
+						"          FirstName = first_name,",
+						"          LastName = last_name",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> select1",
+						"select1 keyGenerate(output(ActorKey as long),",
+						"     startAt: 1L,",
+						"     stepValue: 1L,",
+						"     partitionBy('roundRobin', 2)) ~> surrogateKey1",
+						"surrogateKey1 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     format: 'delta',",
+						"     fileSystem: 'fsuofuis6480dldw001',",
+						"     folderPath: 'Gold/UofU/IS6480/Instructor/RentalDB/DimActor',",
+						"     mergeSchema: false,",
+						"     autoCompact: false,",
+						"     optimizedWrite: false,",
+						"     vacuum: 0,",
+						"     deletable: false,",
+						"     insertable: true,",
+						"     updateable: false,",
+						"     upsertable: false,",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     mapColumn(",
+						"          ActorID,",
+						"          FirstName,",
+						"          LastName,",
+						"          ActorKey",
+						"     )) ~> sink1"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/saw-uofu-is6480-dldwhndev-001-WorkspaceDefaultStorage')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/DimExtract')]",
+			"type": "Microsoft.Synapse/workspaces/dataflows",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"linkedService": {
+								"referenceName": "saw-uofu-is6480-dldwhndev-001-WorkspaceDefaultStorage",
+								"type": "LinkedServiceReference"
+							},
+							"name": "sourceActor"
 						},
 						{
 							"linkedService": {
@@ -1860,6 +2004,13 @@
 								"type": "LinkedServiceReference"
 							},
 							"name": "sink2"
+						},
+						{
+							"linkedService": {
+								"referenceName": "saw-uofu-is6480-dldwhndev-001-WorkspaceDefaultStorage",
+								"type": "LinkedServiceReference"
+							},
+							"name": "sink3"
 						}
 					],
 					"transformations": [
@@ -1877,6 +2028,9 @@
 						},
 						{
 							"name": "select3"
+						},
+						{
+							"name": "surrogateKey3"
 						}
 					],
 					"scriptLines": [
@@ -1899,9 +2053,19 @@
 						"     quoteChar: '\\\"',",
 						"     columnNamesAsHeader: true) ~> sourceActor",
 						"source(output(",
-						"          actor_id as short,",
 						"          film_id as short,",
-						"          last_update as string",
+						"          title as string,",
+						"          description as string,",
+						"          release_year as short,",
+						"          language_id as string,",
+						"          rental_duration as short,",
+						"          rental_rate as double,",
+						"          length as short,",
+						"          replacement_cost as double,",
+						"          rating as string,",
+						"          last_update as string,",
+						"          special_features as string,",
+						"          fulltext as string",
 						"     ),",
 						"     useSchema: false,",
 						"     allowSchemaDrift: true,",
@@ -1909,13 +2073,18 @@
 						"     ignoreNoFilesFound: false,",
 						"     format: 'delimited',",
 						"     fileSystem: 'fsuofuis6480dldw001',",
-						"     folderPath: 'Gold/UofU/IS6480/Instructor/RentalDB/film_actor',",
+						"     folderPath: 'Gold/UofU/IS6480/Instructor/RentalDB/film',",
 						"     fileName: 'data.csv',",
 						"     columnDelimiter: ',',",
 						"     escapeChar: '\\\\',",
 						"     quoteChar: '\\\"',",
 						"     columnNamesAsHeader: true) ~> sourceFilm",
-						"source(useSchema: false,",
+						"source(output(",
+						"          actor_id as short,",
+						"          film_id as short,",
+						"          last_update as string",
+						"     ),",
+						"     useSchema: false,",
 						"     allowSchemaDrift: true,",
 						"     validateSchema: false,",
 						"     ignoreNoFilesFound: false,",
@@ -1936,19 +2105,40 @@
 						"     skipDuplicateMapOutputs: true) ~> select1",
 						"select1 keyGenerate(output(ActorKey as long),",
 						"     startAt: 1L,",
-						"     stepValue: 1L) ~> surrogateKey1",
+						"     stepValue: 1L,",
+						"     partitionBy('roundRobin', 2)) ~> surrogateKey1",
 						"sourceFilm select(mapColumn(",
-						"          actor_id,",
-						"          film_id,",
-						"          last_update",
+						"          FilmID = film_id,",
+						"          Title = title,",
+						"          Description = description,",
+						"          ReleaseYear = release_year,",
+						"          LanguageID = language_id,",
+						"          RentalDuration = rental_duration,",
+						"          RentalRate = rental_rate,",
+						"          Length = length,",
+						"          ReplacementCost = replacement_cost,",
+						"          Rating = rating,",
+						"          LastUpdate = last_update,",
+						"          SpecialFeatures = special_features,",
+						"          Fulltext = fulltext",
 						"     ),",
 						"     skipDuplicateMapInputs: true,",
 						"     skipDuplicateMapOutputs: true) ~> select2",
 						"select2 keyGenerate(output(FilmKey as long),",
 						"     startAt: 1L,",
-						"     stepValue: 1L) ~> surrogateKey2",
-						"sourceFilmActor select(skipDuplicateMapInputs: true,",
+						"     stepValue: 1L,",
+						"     partitionBy('roundRobin', 2)) ~> surrogateKey2",
+						"sourceFilmActor select(mapColumn(",
+						"          actor_id,",
+						"          film_id,",
+						"          last_update",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
 						"     skipDuplicateMapOutputs: true) ~> select3",
+						"select3 keyGenerate(output(ActorKey as long),",
+						"     startAt: 1L,",
+						"     stepValue: 1L,",
+						"     partitionBy('roundRobin', 2)) ~> surrogateKey3",
 						"surrogateKey1 sink(allowSchemaDrift: true,",
 						"     validateSchema: false,",
 						"     format: 'delta',",
@@ -1992,175 +2182,45 @@
 						"     skipDuplicateMapInputs: true,",
 						"     skipDuplicateMapOutputs: true,",
 						"     mapColumn(",
-						"          actor_id,",
-						"          film_id,",
-						"          last_update,",
+						"          FilmID,",
+						"          Title,",
+						"          Description,",
+						"          Release_year = ReleaseYear,",
+						"          LanguageID,",
+						"          RentalDuration,",
+						"          RentalRate,",
+						"          Length,",
+						"          ReplacementCost,",
+						"          Rating,",
+						"          LastUpdate,",
+						"          SpecialFeatures,",
+						"          Fulltext,",
 						"          FilmKey",
-						"     )) ~> sink2"
-					]
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('workspaceId'), '/linkedServices/saw-uofu-is6480-dldwhndev-001-WorkspaceDefaultStorage')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('workspaceName'), '/DimExtract')]",
-			"type": "Microsoft.Synapse/workspaces/dataflows",
-			"apiVersion": "2019-06-01-preview",
-			"properties": {
-				"type": "MappingDataFlow",
-				"typeProperties": {
-					"sources": [
-						{
-							"linkedService": {
-								"referenceName": "saw-uofu-is6480-dldwhndev-001-WorkspaceDefaultStorage",
-								"type": "LinkedServiceReference"
-							},
-							"name": "sourceActor"
-						},
-						{
-							"linkedService": {
-								"referenceName": "saw-uofu-is6480-dldwhndev-001-WorkspaceDefaultStorage",
-								"type": "LinkedServiceReference"
-							},
-							"name": "sourceFilm"
-						}
-					],
-					"sinks": [
-						{
-							"linkedService": {
-								"referenceName": "saw-uofu-is6480-dldwhndev-001-WorkspaceDefaultStorage",
-								"type": "LinkedServiceReference"
-							},
-							"name": "sink1"
-						},
-						{
-							"linkedService": {
-								"referenceName": "saw-uofu-is6480-dldwhndev-001-WorkspaceDefaultStorage",
-								"type": "LinkedServiceReference"
-							},
-							"name": "sink2"
-						}
-					],
-					"transformations": [
-						{
-							"name": "select1"
-						},
-						{
-							"name": "surrogateKey1"
-						},
-						{
-							"name": "select2"
-						},
-						{
-							"name": "surrogateKey2"
-						}
-					],
-					"scriptLines": [
-						"source(output(",
-						"          actor_id as short,",
-						"          first_name as string,",
-						"          last_name as string,",
-						"          last_update as string",
-						"     ),",
-						"     useSchema: false,",
-						"     allowSchemaDrift: true,",
+						"     )) ~> sink2",
+						"surrogateKey3 sink(allowSchemaDrift: true,",
 						"     validateSchema: false,",
-						"     ignoreNoFilesFound: false,",
-						"     format: 'delimited',",
+						"     format: 'delta',",
 						"     fileSystem: 'fsuofuis6480dldw001',",
-						"     folderPath: 'Gold/UofU/IS6480/Instructor/RentalDB/actor',",
-						"     fileName: 'data.csv',",
-						"     columnDelimiter: ',',",
-						"     escapeChar: '\\\\',",
-						"     quoteChar: '\\\"',",
-						"     columnNamesAsHeader: true) ~> sourceActor",
-						"source(output(",
-						"          actor_id as short,",
-						"          film_id as short,",
-						"          last_update as string",
-						"     ),",
-						"     useSchema: false,",
-						"     allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     ignoreNoFilesFound: false,",
-						"     format: 'delimited',",
-						"     fileSystem: 'fsuofuis6480dldw001',",
-						"     folderPath: 'Gold/UofU/IS6480/Instructor/RentalDB/film_actor',",
-						"     fileName: 'data.csv',",
-						"     columnDelimiter: ',',",
-						"     escapeChar: '\\\\',",
-						"     quoteChar: '\\\"',",
-						"     columnNamesAsHeader: true) ~> sourceFilm",
-						"sourceActor select(mapColumn(",
+						"     folderPath: 'Gold/UofU/IS6480/Instructor/RentalDB/DIimFilmActor',",
+						"     mergeSchema: false,",
+						"     autoCompact: false,",
+						"     optimizedWrite: false,",
+						"     vacuum: 0,",
+						"     deletable: false,",
+						"     insertable: true,",
+						"     updateable: false,",
+						"     upsertable: false,",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     mapColumn(",
 						"          ActorID = actor_id,",
-						"          FirstName = first_name,",
-						"          LastName = last_name",
-						"     ),",
-						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true) ~> select1",
-						"select1 keyGenerate(output(ActorKey as long),",
-						"     startAt: 1L,",
-						"     stepValue: 1L) ~> surrogateKey1",
-						"sourceFilm select(mapColumn(",
-						"          actor_id,",
-						"          film_id,",
-						"          last_update",
-						"     ),",
-						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true) ~> select2",
-						"select2 keyGenerate(output(FilmKey as long),",
-						"     startAt: 1L,",
-						"     stepValue: 1L) ~> surrogateKey2",
-						"surrogateKey1 sink(allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     format: 'delta',",
-						"     fileSystem: 'fsuofuis6480dldw001',",
-						"     folderPath: 'Gold/UofU/IS6480/Instructor/RentalDB/DimActor',",
-						"     mergeSchema: false,",
-						"     autoCompact: false,",
-						"     optimizedWrite: false,",
-						"     vacuum: 0,",
-						"     deletable: false,",
-						"     insertable: true,",
-						"     updateable: false,",
-						"     upsertable: false,",
-						"     umask: 0022,",
-						"     preCommands: [],",
-						"     postCommands: [],",
-						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true,",
-						"     mapColumn(",
-						"          ActorID,",
-						"          FirstName,",
-						"          LastName,",
+						"          FilmID = film_id,",
+						"          LastUpdate = last_update,",
 						"          ActorKey",
-						"     )) ~> sink1",
-						"surrogateKey2 sink(allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     format: 'delta',",
-						"     fileSystem: 'fsuofuis6480dldw001',",
-						"     folderPath: 'Gold/UofU/IS6480/Instructor/RentalDB/FilmDim',",
-						"     mergeSchema: false,",
-						"     autoCompact: false,",
-						"     optimizedWrite: false,",
-						"     vacuum: 0,",
-						"     deletable: false,",
-						"     insertable: true,",
-						"     updateable: false,",
-						"     upsertable: false,",
-						"     umask: 0022,",
-						"     preCommands: [],",
-						"     postCommands: [],",
-						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true,",
-						"     mapColumn(",
-						"          actor_id,",
-						"          film_id,",
-						"          last_update,",
-						"          FilmKey",
-						"     )) ~> sink2"
+						"     )) ~> sink3"
 					]
 				}
 			},
@@ -2181,7 +2241,7 @@
 								"referenceName": "saw-uofu-is6480-dldwhndev-001-WorkspaceDefaultStorage",
 								"type": "LinkedServiceReference"
 							},
-							"name": "dimsource"
+							"name": "dimActorSource"
 						}
 					],
 					"sinks": [
@@ -2202,24 +2262,15 @@
 							"name": "dimselect"
 						},
 						{
-							"name": "surrogateKey1"
+							"name": "surrogateKey"
 						}
 					],
 					"scriptLines": [
 						"source(output(",
-						"          film_id as short,",
-						"          title as string,",
-						"          description as string,",
-						"          release_year as short,",
-						"          language_id as boolean,",
-						"          rental_duration as short,",
-						"          rental_rate as double,",
-						"          length as short,",
-						"          replacement_cost as double,",
-						"          rating as string,",
-						"          last_update as string,",
-						"          special_features as string,",
-						"          fulltext as string",
+						"          actor_id as short,",
+						"          first_name as string,",
+						"          last_name as string,",
+						"          last_update as string",
 						"     ),",
 						"     useSchema: false,",
 						"     allowSchemaDrift: true,",
@@ -2227,25 +2278,23 @@
 						"     ignoreNoFilesFound: false,",
 						"     format: 'delimited',",
 						"     fileSystem: 'fsuofuis6480dldw001',",
-						"     folderPath: 'Bronze/UofU/IS6480/Instructor/DVDRental/film',",
+						"     folderPath: 'Gold/UofU/IS6480/Instructor/RentalDB/actor',",
 						"     fileName: 'data.csv',",
 						"     columnDelimiter: ',',",
 						"     escapeChar: '\\\\',",
 						"     quoteChar: '\\\"',",
-						"     columnNamesAsHeader: true) ~> dimsource",
-						"dimsource select(mapColumn(",
-						"          FilmID = film_id,",
-						"          Title = title,",
-						"          Description = description,",
-						"          ReleaseYear = release_year,",
-						"          Rating = rating",
+						"     columnNamesAsHeader: true) ~> dimActorSource",
+						"dimActorSource select(mapColumn(",
+						"          ActorID = actor_id,",
+						"          FirstName = first_name,",
+						"          LastName = last_name",
 						"     ),",
 						"     skipDuplicateMapInputs: false,",
 						"     skipDuplicateMapOutputs: false) ~> dimselect",
-						"dimselect keyGenerate(output(FilmKey as long),",
+						"dimselect keyGenerate(output(ActorKey as long),",
 						"     startAt: 1L,",
-						"     stepValue: 1L) ~> surrogateKey1",
-						"surrogateKey1 sink(allowSchemaDrift: true,",
+						"     stepValue: 1L) ~> surrogateKey",
+						"surrogateKey sink(allowSchemaDrift: true,",
 						"     validateSchema: false,",
 						"     format: 'delta',",
 						"     fileSystem: 'fsuofuis6480dldw001',",
@@ -2263,12 +2312,10 @@
 						"     postCommands: [],",
 						"     skipDuplicateMapOutputs: true,",
 						"     mapColumn(",
-						"          FilmID,",
-						"          Title,",
-						"          Description,",
-						"          ReleaseYear,",
-						"          Rating,",
-						"          FilmKey",
+						"          ActorID,",
+						"          FirstName,",
+						"          LastName,",
+						"          ActorKey",
 						"     )) ~> dimsink"
 					]
 				}
@@ -2298,6 +2345,13 @@
 								"type": "LinkedServiceReference"
 							},
 							"name": "sourceFilm"
+						},
+						{
+							"linkedService": {
+								"referenceName": "saw-uofu-is6480-dldwhndev-001-WorkspaceDefaultStorage",
+								"type": "LinkedServiceReference"
+							},
+							"name": "sourceFilmActor"
 						}
 					],
 					"sinks": [
@@ -2307,90 +2361,92 @@
 								"type": "LinkedServiceReference"
 							},
 							"name": "sink1"
-						},
-						{
-							"linkedService": {
-								"referenceName": "saw-uofu-is6480-dldwhndev-001-WorkspaceDefaultStorage",
-								"type": "LinkedServiceReference"
-							},
-							"name": "sink2"
 						}
 					],
 					"transformations": [
 						{
+							"name": "join1"
+						},
+						{
 							"name": "select1"
 						},
 						{
-							"name": "surrogateKey1"
-						},
-						{
-							"name": "select2"
-						},
-						{
-							"name": "surrogateKey2"
+							"name": "lookup1"
 						}
 					],
 					"scriptLines": [
 						"source(output(",
-						"          actor_id as short,",
-						"          first_name as string,",
-						"          last_name as string,",
-						"          last_update as string",
+						"          ActorID as short,",
+						"          FirstName as string,",
+						"          LastName as string,",
+						"          ActorKey as long",
 						"     ),",
-						"     useSchema: false,",
 						"     allowSchemaDrift: true,",
 						"     validateSchema: false,",
 						"     ignoreNoFilesFound: false,",
-						"     format: 'delimited',",
+						"     format: 'delta',",
 						"     fileSystem: 'fsuofuis6480dldw001',",
-						"     folderPath: 'Gold/UofU/IS6480/Instructor/RentalDB/actor',",
-						"     fileName: 'data.csv',",
-						"     columnDelimiter: ',',",
-						"     escapeChar: '\\\\',",
-						"     quoteChar: '\\\"',",
-						"     columnNamesAsHeader: true) ~> sourceActor",
+						"     folderPath: 'Gold/UofU/IS6480/Instructor/RentalDB/DimActor') ~> sourceActor",
 						"source(output(",
-						"          actor_id as short,",
-						"          film_id as short,",
-						"          last_update as string",
+						"          FilmID as short,",
+						"          Title as string,",
+						"          Description as string,",
+						"          Release_year as short,",
+						"          LanguageID as string,",
+						"          RentalDuration as short,",
+						"          RentalRate as double,",
+						"          Length as short,",
+						"          ReplacementCost as double,",
+						"          Rating as string,",
+						"          LastUpdate as string,",
+						"          SpecialFeatures as string,",
+						"          Fulltext as string,",
+						"          FilmKey as long",
 						"     ),",
-						"     useSchema: false,",
 						"     allowSchemaDrift: true,",
 						"     validateSchema: false,",
 						"     ignoreNoFilesFound: false,",
-						"     format: 'delimited',",
+						"     format: 'delta',",
 						"     fileSystem: 'fsuofuis6480dldw001',",
-						"     folderPath: 'Gold/UofU/IS6480/Instructor/RentalDB/film_actor',",
-						"     fileName: 'data.csv',",
-						"     columnDelimiter: ',',",
-						"     escapeChar: '\\\\',",
-						"     quoteChar: '\\\"',",
-						"     columnNamesAsHeader: true) ~> sourceFilm",
-						"sourceActor select(mapColumn(",
-						"          ActorID = actor_id,",
-						"          FirstName = first_name,",
-						"          LastName = last_name",
+						"     folderPath: 'Gold/UofU/IS6480/Instructor/RentalDB/FilmDim') ~> sourceFilm",
+						"source(output(",
+						"          ActorID as short,",
+						"          FilmID as short,",
+						"          LastUpdate as string,",
+						"          ActorKey as long",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     format: 'delta',",
+						"     fileSystem: 'fsuofuis6480dldw001',",
+						"     folderPath: 'Gold/UofU/IS6480/Instructor/RentalDB/DIimFilmActor') ~> sourceFilmActor",
+						"sourceActor, sourceFilmActor join(sourceActor@ActorKey == sourceFilmActor@ActorKey,",
+						"     joinType:'left',",
+						"     matchType:'exact',",
+						"     ignoreSpaces: false,",
+						"     partitionBy('hash', 1),",
+						"     broadcast: 'auto')~> join1",
+						"join1 select(mapColumn(",
+						"          ActorID = sourceActor@ActorID,",
+						"          FirstName,",
+						"          LastName,",
+						"          ActorKey = sourceActor@ActorKey,",
+						"          ActorID = sourceFilmActor@ActorID,",
+						"          FilmID,",
+						"          ActorKey = sourceFilmActor@ActorKey",
 						"     ),",
 						"     skipDuplicateMapInputs: true,",
 						"     skipDuplicateMapOutputs: true) ~> select1",
-						"select1 keyGenerate(output(ActorKey as long),",
-						"     startAt: 1L,",
-						"     stepValue: 1L) ~> surrogateKey1",
-						"sourceFilm select(mapColumn(",
-						"          actor_id,",
-						"          film_id,",
-						"          last_update",
-						"     ),",
-						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true) ~> select2",
-						"select2 keyGenerate(output(FilmKey as long),",
-						"     startAt: 1L,",
-						"     stepValue: 1L) ~> surrogateKey2",
-						"surrogateKey1 sink(allowSchemaDrift: true,",
+						"select1, sourceFilm lookup(select1@FilmID == FilmKey,",
+						"     multiple: false,",
+						"     pickup: 'any',",
+						"     broadcast: 'auto')~> lookup1",
+						"lookup1 sink(allowSchemaDrift: true,",
 						"     validateSchema: false,",
 						"     format: 'delta',",
 						"     fileSystem: 'fsuofuis6480dldw001',",
-						"     folderPath: 'Gold/UofU/IS6480/Instructor/RentalDB/DimActor',",
+						"     folderPath: 'Gold/UofU/IS6480/Instructor/RentalDB/FactActorFilm',",
 						"     mergeSchema: false,",
 						"     autoCompact: false,",
 						"     optimizedWrite: false,",
@@ -2402,38 +2458,25 @@
 						"     umask: 0022,",
 						"     preCommands: [],",
 						"     postCommands: [],",
-						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true,",
 						"     mapColumn(",
 						"          ActorID,",
 						"          FirstName,",
 						"          LastName,",
-						"          ActorKey",
-						"     )) ~> sink1",
-						"surrogateKey2 sink(allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     format: 'delta',",
-						"     fileSystem: 'fsuofuis6480dldw001',",
-						"     folderPath: 'Gold/UofU/IS6480/Instructor/RentalDB/FilmDim',",
-						"     mergeSchema: false,",
-						"     autoCompact: false,",
-						"     optimizedWrite: false,",
-						"     vacuum: 0,",
-						"     deletable: false,",
-						"     insertable: true,",
-						"     updateable: false,",
-						"     upsertable: false,",
-						"     umask: 0022,",
-						"     preCommands: [],",
-						"     postCommands: [],",
-						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true,",
-						"     mapColumn(",
-						"          actor_id,",
-						"          film_id,",
-						"          last_update,",
+						"          ActorKey,",
+						"          Title,",
+						"          Description,",
+						"          Release_year,",
+						"          LanguageID,",
+						"          RentalDuration,",
+						"          RentalRate,",
+						"          Length,",
+						"          ReplacementCost,",
+						"          Rating,",
+						"          LastUpdate,",
+						"          SpecialFeatures,",
+						"          Fulltext,",
 						"          FilmKey",
-						"     )) ~> sink2"
+						"     )) ~> sink1"
 					]
 				}
 			},
