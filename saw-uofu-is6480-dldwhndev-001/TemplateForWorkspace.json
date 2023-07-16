@@ -177,8 +177,7 @@
 				"lastPublishTime": "2023-07-12T05:45:35Z"
 			},
 			"dependsOn": [
-				"[concat(variables('workspaceId'), '/dataflows/FactActorFilm')]",
-				"[concat(variables('workspaceId'), '/integrationRuntimes/AutoResolveIntegrationRuntime')]"
+				"[concat(variables('workspaceId'), '/dataflows/FactActorFilm')]"
 			]
 		},
 		{
@@ -2457,10 +2456,11 @@
 						"     preCommands: [],",
 						"     postCommands: [],",
 						"     mapColumn(",
+						"          ActorKey,",
+						"          FilmKey,",
 						"          ActorID,",
 						"          FirstName,",
 						"          LastName,",
-						"          ActorKey,",
 						"          Title,",
 						"          Description,",
 						"          Release_year,",
@@ -2472,8 +2472,7 @@
 						"          Rating,",
 						"          LastUpdate,",
 						"          SpecialFeatures,",
-						"          Fulltext,",
-						"          FilmKey",
+						"          Fulltext",
 						"     )) ~> sink1"
 					]
 				}
