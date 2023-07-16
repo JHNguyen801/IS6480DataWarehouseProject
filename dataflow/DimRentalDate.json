@@ -1,6 +1,9 @@
 {
 	"name": "DimRentalDate",
 	"properties": {
+		"folder": {
+			"name": "Project"
+		},
 		"type": "MappingDataFlow",
 		"typeProperties": {
 			"sources": [

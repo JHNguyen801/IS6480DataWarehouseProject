@@ -1,6 +1,9 @@
 {
 	"name": "DimSelectCustomer",
 	"properties": {
+		"folder": {
+			"name": "Project"
+		},
 		"type": "MappingDataFlow",
 		"typeProperties": {
 			"sources": [

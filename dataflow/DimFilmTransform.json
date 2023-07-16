@@ -1,6 +1,9 @@
 {
 	"name": "DimFilmTransform",
 	"properties": {
+		"folder": {
+			"name": "Project"
+		},
 		"type": "MappingDataFlow",
 		"typeProperties": {
 			"sources": [
