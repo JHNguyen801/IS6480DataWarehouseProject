@@ -1195,7 +1195,8 @@
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('workspaceId'), '/dataflows/DimSelectCustomer')]"
+				"[concat(variables('workspaceId'), '/dataflows/DimSelectCustomer')]",
+				"[concat(variables('workspaceId'), '/integrationRuntimes/AutoResolveIntegrationRuntime')]"
 			]
 		},
 		{
@@ -2344,12 +2345,12 @@
 						"dimselect keyGenerate(output(CustomerKey as long),",
 						"     startAt: 1L,",
 						"     stepValue: 1L,",
-						"     partitionBy('roundRobin', 2)) ~> surrogateKey",
+						"     partitionBy('hash', 1)) ~> surrogateKey",
 						"surrogateKey sink(allowSchemaDrift: true,",
 						"     validateSchema: false,",
 						"     format: 'delta',",
 						"     fileSystem: 'fsuofuis6480dldw001',",
-						"     folderPath: 'Gold/Actor',",
+						"     folderPath: 'IS6480_DW_GroupSix_Project/DimCustomer',",
 						"     mergeSchema: false,",
 						"     autoCompact: false,",
 						"     optimizedWrite: false,",
@@ -2363,12 +2364,12 @@
 						"     postCommands: [],",
 						"     skipDuplicateMapInputs: true,",
 						"     mapColumn(",
+						"          CustomerKey,",
 						"          CustomerID,",
 						"          StoreID,",
 						"          FirstName,",
 						"          LastName,",
-						"          create_date,",
-						"          CustomerKey",
+						"          create_date",
 						"     )) ~> dimsink"
 					]
 				}
