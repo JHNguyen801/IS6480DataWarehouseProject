@@ -1,9 +1,9 @@
 {
-	"name": "PL2_TransformCustomer",
+	"name": "PL2_TransformRental",
 	"properties": {
 		"activities": [
 			{
-				"name": "SelectDataset",
+				"name": "Select_DimRental_Dataflow",
 				"type": "ExecuteDataFlow",
 				"dependsOn": [],
 				"policy": {
@@ -16,7 +16,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataflow": {
-						"referenceName": "DimSelectCustomer",
+						"referenceName": "DimRental",
 						"type": "DataFlowReference"
 					},
 					"compute": {
