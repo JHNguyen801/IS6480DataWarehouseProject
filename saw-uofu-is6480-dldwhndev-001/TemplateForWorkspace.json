@@ -1173,6 +1173,9 @@
 								"parameters": {},
 								"datasetParameters": {
 									"dimActorSource": {},
+									"sourceRental": {},
+									"sourceInventory": {},
+									"sourcePayment": {},
 									"dimsink": {}
 								}
 							},
@@ -2285,6 +2288,27 @@
 								"type": "LinkedServiceReference"
 							},
 							"name": "dimActorSource"
+						},
+						{
+							"linkedService": {
+								"referenceName": "saw-uofu-is6480-dldwhndev-001-WorkspaceDefaultStorage",
+								"type": "LinkedServiceReference"
+							},
+							"name": "sourceRental"
+						},
+						{
+							"linkedService": {
+								"referenceName": "saw-uofu-is6480-dldwhndev-001-WorkspaceDefaultStorage",
+								"type": "LinkedServiceReference"
+							},
+							"name": "sourceInventory"
+						},
+						{
+							"linkedService": {
+								"referenceName": "saw-uofu-is6480-dldwhndev-001-WorkspaceDefaultStorage",
+								"type": "LinkedServiceReference"
+							},
+							"name": "sourcePayment"
 						}
 					],
 					"sinks": [
@@ -2306,6 +2330,18 @@
 						},
 						{
 							"name": "surrogateKey"
+						},
+						{
+							"name": "select1"
+						},
+						{
+							"name": "join1"
+						},
+						{
+							"name": "join2"
+						},
+						{
+							"name": "surrogateKey1"
 						}
 					],
 					"scriptLines": [
@@ -2333,6 +2369,65 @@
 						"     escapeChar: '\\\\',",
 						"     quoteChar: '\\\"',",
 						"     columnNamesAsHeader: true) ~> dimActorSource",
+						"source(output(",
+						"          rental_id as short,",
+						"          rental_date as string,",
+						"          inventory_id as short,",
+						"          customer_id as short,",
+						"          return_date as string,",
+						"          staff_id as short,",
+						"          last_update as string",
+						"     ),",
+						"     useSchema: false,",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     format: 'delimited',",
+						"     fileSystem: 'fsuofuis6480dldw001',",
+						"     folderPath: 'IS6480_DW_GroupSix_Project/rental',",
+						"     fileName: 'data.csv',",
+						"     columnDelimiter: ',',",
+						"     escapeChar: '\\\\',",
+						"     quoteChar: '\\\"',",
+						"     columnNamesAsHeader: true) ~> sourceRental",
+						"source(output(",
+						"          inventory_id as short,",
+						"          film_id as short,",
+						"          store_id as short,",
+						"          last_update as string",
+						"     ),",
+						"     useSchema: false,",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     format: 'delimited',",
+						"     fileSystem: 'fsuofuis6480dldw001',",
+						"     folderPath: 'IS6480_DW_GroupSix_Project/inventory',",
+						"     fileName: 'data.csv',",
+						"     columnDelimiter: ',',",
+						"     escapeChar: '\\\\',",
+						"     quoteChar: '\\\"',",
+						"     columnNamesAsHeader: true) ~> sourceInventory",
+						"source(output(",
+						"          payment_id as short,",
+						"          customer_id as short,",
+						"          staff_id as short,",
+						"          rental_id as short,",
+						"          amount as double,",
+						"          payment_date as string",
+						"     ),",
+						"     useSchema: false,",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     format: 'delimited',",
+						"     fileSystem: 'fsuofuis6480dldw001',",
+						"     folderPath: 'IS6480_DW_GroupSix_Project/payment',",
+						"     fileName: 'data.csv',",
+						"     columnDelimiter: ',',",
+						"     escapeChar: '\\\\',",
+						"     quoteChar: '\\\"',",
+						"     columnNamesAsHeader: true) ~> sourcePayment",
 						"dimActorSource select(mapColumn(",
 						"          CustomerID = customer_id,",
 						"          StoreID = store_id,",
@@ -2346,6 +2441,29 @@
 						"     startAt: 1L,",
 						"     stepValue: 1L,",
 						"     partitionBy('hash', 1)) ~> surrogateKey",
+						"sourceRental select(mapColumn(",
+						"          RentalID = rental_id,",
+						"          RentalDate = rental_date,",
+						"          InventoryID = inventory_id,",
+						"          CustomerID = customer_id,",
+						"          ReturnDate = return_date",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: false) ~> select1",
+						"select1, sourceInventory join(InventoryID == inventory_id,",
+						"     joinType:'outer',",
+						"     matchType:'exact',",
+						"     ignoreSpaces: false,",
+						"     broadcast: 'off')~> join1",
+						"join1, sourcePayment join(RentalID == rental_id,",
+						"     joinType:'outer',",
+						"     matchType:'exact',",
+						"     ignoreSpaces: false,",
+						"     broadcast: 'auto')~> join2",
+						"join2 keyGenerate(output(RentalKey as long),",
+						"     startAt: 1L,",
+						"     stepValue: 1L,",
+						"     partitionBy('hash', 1)) ~> surrogateKey1",
 						"surrogateKey sink(allowSchemaDrift: true,",
 						"     validateSchema: false,",
 						"     format: 'delta',",
