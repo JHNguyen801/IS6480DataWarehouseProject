@@ -6,11 +6,104 @@
 		},
 		"type": "MappingDataFlow",
 		"typeProperties": {
-			"sources": [],
+			"sources": [
+				{
+					"linkedService": {
+						"referenceName": "saw-uofu-is6480-dldwhndev-001-WorkspaceDefaultStorage",
+						"type": "LinkedServiceReference"
+					},
+					"name": "sourceDimCustomer"
+				},
+				{
+					"linkedService": {
+						"referenceName": "saw-uofu-is6480-dldwhndev-001-WorkspaceDefaultStorage",
+						"type": "LinkedServiceReference"
+					},
+					"name": "sourceDimFilm"
+				},
+				{
+					"linkedService": {
+						"referenceName": "saw-uofu-is6480-dldwhndev-001-WorkspaceDefaultStorage",
+						"type": "LinkedServiceReference"
+					},
+					"name": "sourceDimRental"
+				},
+				{
+					"linkedService": {
+						"referenceName": "saw-uofu-is6480-dldwhndev-001-WorkspaceDefaultStorage",
+						"type": "LinkedServiceReference"
+					},
+					"name": "sourceDimRentalDate"
+				}
+			],
 			"sinks": [],
 			"transformations": [],
 			"scriptLines": [
-				""
+				"source(output(",
+				"          CustomerKey as long,",
+				"          CustomerID as short,",
+				"          StoreID as short,",
+				"          FirstName as string,",
+				"          LastName as string,",
+				"          create_date as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     format: 'delta',",
+				"     fileSystem: 'fsuofuis6480dldw001',",
+				"     folderPath: 'IS6480_DW_GroupSix_Project/DimCustomer') ~> sourceDimCustomer",
+				"source(output(",
+				"          FilmKey as long,",
+				"          FilmID as short,",
+				"          CategoryID as short,",
+				"          Name as string,",
+				"          Title as string,",
+				"          Description as string,",
+				"          RentalRate as double,",
+				"          Rating as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     format: 'delta',",
+				"     fileSystem: 'fsuofuis6480dldw001',",
+				"     folderPath: 'IS6480_DW_GroupSix_Project/DimFilm') ~> sourceDimFilm",
+				"source(output(",
+				"          RentalKey as long,",
+				"          RentalID as short,",
+				"          RentalDate as string,",
+				"          InventoryID as short,",
+				"          CustomerID as short,",
+				"          ReturnDate as string,",
+				"          FilmID as short,",
+				"          StoreID as short,",
+				"          PaymentID as short,",
+				"          Amount as double",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     format: 'delta',",
+				"     fileSystem: 'fsuofuis6480dldw001',",
+				"     folderPath: 'IS6480_DW_GroupSix_Project/DimRental') ~> sourceDimRental",
+				"source(output(",
+				"          RentalID as short,",
+				"          RentalDate as date,",
+				"          InventoryID as short,",
+				"          CustomerID as short,",
+				"          ReturnDate as date,",
+				"          DateKey as long,",
+				"          DayOfWeek as integer,",
+				"          WeekOfYear as integer,",
+				"          Month as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     format: 'delta',",
+				"     fileSystem: 'fsuofuis6480dldw001',",
+				"     folderPath: 'IS6480_DW_GroupSix_Project/DimDate') ~> sourceDimRentalDate"
 			]
 		}
 	}
