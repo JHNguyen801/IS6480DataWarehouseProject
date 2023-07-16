@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "DimActor",
+				"name": "PL2_DimActor",
 				"type": "ExecuteDataFlow",
 				"dependsOn": [],
 				"policy": {
