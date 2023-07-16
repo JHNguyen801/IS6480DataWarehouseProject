@@ -2,7 +2,7 @@
 	"name": "DimFilmTransform",
 	"properties": {
 		"folder": {
-			"name": "Lab2Challenge"
+			"name": "Project"
 		},
 		"type": "MappingDataFlow",
 		"typeProperties": {
