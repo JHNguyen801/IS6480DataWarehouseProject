@@ -1,5 +1,5 @@
 {
-	"name": "PL1_RentalDB_CopyAny_CSV",
+	"name": "PL1_RentalDB_Extract",
 	"properties": {
 		"activities": [
 			{
