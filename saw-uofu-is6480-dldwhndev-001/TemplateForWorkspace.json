@@ -134,7 +134,7 @@
 			"properties": {
 				"activities": [
 					{
-						"name": "ExecuteCleanUIS6480InstructorRentalDBFilmExecute",
+						"name": "ExecuteRentalDBFactActorFilm",
 						"type": "ExecuteDataFlow",
 						"dependsOn": [],
 						"policy": {
@@ -147,16 +147,14 @@
 						"userProperties": [],
 						"typeProperties": {
 							"dataflow": {
-								"referenceName": "DimExtract",
+								"referenceName": "FactActorFilm",
 								"type": "DataFlowReference",
 								"parameters": {},
 								"datasetParameters": {
 									"sourceActor": {},
 									"sourceFilm": {},
 									"sourceFilmActor": {},
-									"sink1": {},
-									"sink2": {},
-									"sink3": {}
+									"sink1": {}
 								}
 							},
 							"staging": {},
@@ -179,7 +177,7 @@
 				"lastPublishTime": "2023-07-12T05:45:35Z"
 			},
 			"dependsOn": [
-				"[concat(variables('workspaceId'), '/dataflows/DimExtract')]",
+				"[concat(variables('workspaceId'), '/dataflows/FactActorFilm')]",
 				"[concat(variables('workspaceId'), '/integrationRuntimes/AutoResolveIntegrationRuntime')]"
 			]
 		},
