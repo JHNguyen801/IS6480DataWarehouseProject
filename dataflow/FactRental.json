@@ -36,8 +36,26 @@
 					"name": "sourceDimRentalDate"
 				}
 			],
-			"sinks": [],
-			"transformations": [],
+			"sinks": [
+				{
+					"linkedService": {
+						"referenceName": "saw-uofu-is6480-dldwhndev-001-WorkspaceDefaultStorage",
+						"type": "LinkedServiceReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "union1"
+				},
+				{
+					"name": "select1"
+				},
+				{
+					"name": "join1"
+				}
+			],
 			"scriptLines": [
 				"source(output(",
 				"          CustomerKey as long,",
@@ -103,7 +121,69 @@
 				"     ignoreNoFilesFound: false,",
 				"     format: 'delta',",
 				"     fileSystem: 'fsuofuis6480dldw001',",
-				"     folderPath: 'IS6480_DW_GroupSix_Project/DimDate') ~> sourceDimRentalDate"
+				"     folderPath: 'IS6480_DW_GroupSix_Project/DimDate') ~> sourceDimRentalDate",
+				"sourceDimRental, sourceDimCustomer union(byName: true)~> union1",
+				"union1 select(mapColumn(",
+				"          RentalKey,",
+				"          RentalID,",
+				"          RentalDate,",
+				"          InventoryID,",
+				"          CustomerID,",
+				"          ReturnDate,",
+				"          FilmID,",
+				"          StoreID,",
+				"          PaymentID,",
+				"          Amount,",
+				"          CustomerKey,",
+				"          FirstName,",
+				"          LastName,",
+				"          create_date",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"select1, sourceDimFilm join(select1@FilmID == FilmKey,",
+				"     joinType:'outer',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> join1",
+				"join1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'delta',",
+				"     fileSystem: 'fsuofuis6480dldw001',",
+				"     folderPath: 'IS6480_DW_GroupSix_Project/FactRental',",
+				"     mergeSchema: false,",
+				"     autoCompact: false,",
+				"     optimizedWrite: false,",
+				"     vacuum: 0,",
+				"     deletable: false,",
+				"     insertable: true,",
+				"     updateable: false,",
+				"     upsertable: false,",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     mapColumn(",
+				"          CustomerKey,",
+				"          RentalKey,",
+				"          FilmKey,",
+				"          RentalDate,",
+				"          InventoryID,",
+				"          CustomerID,",
+				"          ReturnDate,",
+				"          StoreID,",
+				"          PaymentID,",
+				"          Amount,",
+				"          FirstName,",
+				"          LastName,",
+				"          create_date,",
+				"          FilmID = sourceDimFilm@FilmID,",
+				"          CategoryID,",
+				"          Name,",
+				"          Title,",
+				"          Description,",
+				"          RentalRate,",
+				"          Rating",
+				"     )) ~> sink1"
 			]
 		}
 	}
