@@ -16,7 +16,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataflow": {
-						"referenceName": "DimExtract",
+						"referenceName": "FactActorFilm",
 						"type": "DataFlowReference"
 					},
 					"compute": {
