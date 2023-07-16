@@ -181,7 +181,7 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('workspaceName'), '/DimActor')]",
+			"name": "[concat(parameters('workspaceName'), '/P2_DimActor')]",
 			"type": "Microsoft.Synapse/workspaces/pipelines",
 			"apiVersion": "2019-06-01-preview",
 			"properties": {
@@ -232,7 +232,8 @@
 				"lastPublishTime": "2023-07-10T01:40:52Z"
 			},
 			"dependsOn": [
-				"[concat(variables('workspaceId'), '/dataflows/DimExtract')]"
+				"[concat(variables('workspaceId'), '/dataflows/DimExtract')]",
+				"[concat(variables('workspaceId'), '/integrationRuntimes/AutoResolveIntegrationRuntime')]"
 			]
 		},
 		{
@@ -440,59 +441,6 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('workspaceName'), '/FactActorFilm')]",
-			"type": "Microsoft.Synapse/workspaces/pipelines",
-			"apiVersion": "2019-06-01-preview",
-			"properties": {
-				"activities": [
-					{
-						"name": "Data flow Union Sources",
-						"type": "ExecuteDataFlow",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "0.10:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"dataflow": {
-								"referenceName": "FactActorFilm",
-								"type": "DataFlowReference",
-								"parameters": {},
-								"datasetParameters": {
-									"sourceActor": {},
-									"sourceFilm": {},
-									"sourceFilmActor": {},
-									"sink1": {}
-								}
-							},
-							"staging": {},
-							"compute": {
-								"coreCount": 8,
-								"computeType": "General"
-							},
-							"traceLevel": "Fine"
-						}
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {},
-					"cancelAfter": {}
-				},
-				"folder": {
-					"name": "2_Gold"
-				},
-				"annotations": [],
-				"lastPublishTime": "2023-07-12T06:22:20Z"
-			},
-			"dependsOn": [
-				"[concat(variables('workspaceId'), '/dataflows/FactActorFilm')]"
-			]
-		},
-		{
 			"name": "[concat(parameters('workspaceName'), '/IS6480_GroupSix_RentalDB_Any_CSV_copy')]",
 			"type": "Microsoft.Synapse/workspaces/pipelines",
 			"apiVersion": "2019-06-01-preview",
@@ -592,6 +540,59 @@
 			"dependsOn": [
 				"[concat(variables('workspaceId'), '/datasets/DS_Source_UofU_IS6480_Instructor_RentalDB_Any_CSV')]",
 				"[concat(variables('workspaceId'), '/datasets/DS_Bronze_UofU_IS6480_Instructor_RentalDB_Any_CSV')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/P3_FactActorFilm')]",
+			"type": "Microsoft.Synapse/workspaces/pipelines",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"activities": [
+					{
+						"name": "Data flow Union Sources",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.10:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "FactActorFilm",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"sourceActor": {},
+									"sourceFilm": {},
+									"sourceFilmActor": {},
+									"sink1": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"folder": {
+					"name": "2_Gold"
+				},
+				"annotations": [],
+				"lastPublishTime": "2023-07-12T06:22:20Z"
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/dataflows/FactActorFilm')]"
 			]
 		},
 		{
