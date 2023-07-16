@@ -593,7 +593,7 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('workspaceName'), '/PL1_RentalDB_CopyAny_CSV')]",
+			"name": "[concat(parameters('workspaceName'), '/PL1_RentalDB_Extract')]",
 			"type": "Microsoft.Synapse/workspaces/pipelines",
 			"apiVersion": "2019-06-01-preview",
 			"properties": {
@@ -744,7 +744,8 @@
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('workspaceId'), '/dataflows/DimSelectCustomer')]"
+				"[concat(variables('workspaceId'), '/dataflows/DimSelectCustomer')]",
+				"[concat(variables('workspaceId'), '/integrationRuntimes/AutoResolveIntegrationRuntime')]"
 			]
 		},
 		{
