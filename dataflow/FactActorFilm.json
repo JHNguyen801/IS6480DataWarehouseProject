@@ -117,6 +117,8 @@
 				"lookup1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     format: 'delta',",
+				"     fileSystem: 'fsuofuis6480dldw001',",
+				"     folderPath: 'Gold/UofU/IS6480/Instructor/RentalDB/FactActorFilm',",
 				"     mergeSchema: false,",
 				"     autoCompact: false,",
 				"     optimizedWrite: false,",
@@ -128,8 +130,25 @@
 				"     umask: 0022,",
 				"     preCommands: [],",
 				"     postCommands: [],",
-				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> sink1"
+				"     mapColumn(",
+				"          ActorID,",
+				"          FirstName,",
+				"          LastName,",
+				"          ActorKey,",
+				"          Title,",
+				"          Description,",
+				"          Release_year,",
+				"          LanguageID,",
+				"          RentalDuration,",
+				"          RentalRate,",
+				"          Length,",
+				"          ReplacementCost,",
+				"          Rating,",
+				"          LastUpdate,",
+				"          SpecialFeatures,",
+				"          Fulltext,",
+				"          FilmKey",
+				"     )) ~> sink1"
 			]
 		}
 	}
