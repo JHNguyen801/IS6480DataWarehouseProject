@@ -200,12 +200,16 @@
 						"userProperties": [],
 						"typeProperties": {
 							"dataflow": {
-								"referenceName": "DimFilmClean",
+								"referenceName": "DimExtract",
 								"type": "DataFlowReference",
 								"parameters": {},
 								"datasetParameters": {
-									"dimActorSource": {},
-									"dimsink": {}
+									"sourceActor": {},
+									"sourceFilm": {},
+									"sourceFilmActor": {},
+									"sink1": {},
+									"sink2": {},
+									"sink3": {}
 								}
 							},
 							"staging": {},
@@ -228,7 +232,7 @@
 				"lastPublishTime": "2023-07-10T01:40:52Z"
 			},
 			"dependsOn": [
-				"[concat(variables('workspaceId'), '/dataflows/DimFilmClean')]"
+				"[concat(variables('workspaceId'), '/dataflows/DimExtract')]"
 			]
 		},
 		{
