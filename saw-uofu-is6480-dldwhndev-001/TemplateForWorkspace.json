@@ -181,62 +181,6 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('workspaceName'), '/P2_DimActor')]",
-			"type": "Microsoft.Synapse/workspaces/pipelines",
-			"apiVersion": "2019-06-01-preview",
-			"properties": {
-				"activities": [
-					{
-						"name": "PL2_DimActor",
-						"type": "ExecuteDataFlow",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "0.10:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"dataflow": {
-								"referenceName": "DimExtract",
-								"type": "DataFlowReference",
-								"parameters": {},
-								"datasetParameters": {
-									"sourceActor": {},
-									"sourceFilm": {},
-									"sourceFilmActor": {},
-									"sink1": {},
-									"sink2": {},
-									"sink3": {}
-								}
-							},
-							"staging": {},
-							"compute": {
-								"coreCount": 8,
-								"computeType": "General"
-							},
-							"traceLevel": "Fine"
-						}
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {},
-					"cancelAfter": {}
-				},
-				"folder": {
-					"name": "2_Gold"
-				},
-				"annotations": [],
-				"lastPublishTime": "2023-07-10T01:40:52Z"
-			},
-			"dependsOn": [
-				"[concat(variables('workspaceId'), '/dataflows/DimExtract')]",
-				"[concat(variables('workspaceId'), '/integrationRuntimes/AutoResolveIntegrationRuntime')]"
-			]
-		},
-		{
 			"name": "[concat(parameters('workspaceName'), '/DimFilm')]",
 			"type": "Microsoft.Synapse/workspaces/pipelines",
 			"apiVersion": "2019-06-01-preview",
@@ -543,6 +487,61 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('workspaceName'), '/P2_DimActor')]",
+			"type": "Microsoft.Synapse/workspaces/pipelines",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"activities": [
+					{
+						"name": "DimActor",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.10:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "DimExtract",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"sourceActor": {},
+									"sourceFilm": {},
+									"sourceFilmActor": {},
+									"sink1": {},
+									"sink2": {},
+									"sink3": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"folder": {
+					"name": "2_Gold"
+				},
+				"annotations": [],
+				"lastPublishTime": "2023-07-10T01:40:52Z"
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/dataflows/DimExtract')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('workspaceName'), '/P3_FactActorFilm')]",
 			"type": "Microsoft.Synapse/workspaces/pipelines",
 			"apiVersion": "2019-06-01-preview",
@@ -592,17 +591,18 @@
 				"lastPublishTime": "2023-07-12T06:22:20Z"
 			},
 			"dependsOn": [
-				"[concat(variables('workspaceId'), '/dataflows/FactActorFilm')]"
+				"[concat(variables('workspaceId'), '/dataflows/FactActorFilm')]",
+				"[concat(variables('workspaceId'), '/integrationRuntimes/AutoResolveIntegrationRuntime')]"
 			]
 		},
 		{
-			"name": "[concat(parameters('workspaceName'), '/PL1_Source_Instructor_DVDRental_Any_CSV')]",
+			"name": "[concat(parameters('workspaceName'), '/PL1_ExtractSource_to_Storage')]",
 			"type": "Microsoft.Synapse/workspaces/pipelines",
 			"apiVersion": "2019-06-01-preview",
 			"properties": {
 				"activities": [
 					{
-						"name": "CopyAnyDataset",
+						"name": "CopyDatasetFromSource",
 						"description": "Copies any dataset from the DVDRental source given the dataset name as a parameter",
 						"type": "Copy",
 						"dependsOn": [],
