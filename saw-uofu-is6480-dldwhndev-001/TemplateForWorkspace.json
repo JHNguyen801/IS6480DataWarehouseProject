@@ -695,7 +695,7 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('workspaceName'), '/PL2_TransformCustomerRental')]",
+			"name": "[concat(parameters('workspaceName'), '/PL2_TransformCustomer')]",
 			"type": "Microsoft.Synapse/workspaces/pipelines",
 			"apiVersion": "2019-06-01-preview",
 			"properties": {
@@ -719,9 +719,6 @@
 								"parameters": {},
 								"datasetParameters": {
 									"dimActorSource": {},
-									"sourceRental": {},
-									"sourceInventory": {},
-									"sourcePayment": {},
 									"dimsink": {}
 								}
 							},
@@ -800,6 +797,58 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('workspaceName'), '/PL2_TransformRental')]",
+			"type": "Microsoft.Synapse/workspaces/pipelines",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"activities": [
+					{
+						"name": "Select_DimRental_Dataflow",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "DimRental",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"sourceRental": {},
+									"sourceInventory": {},
+									"sourcePayment": {},
+									"sink1": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"folder": {
+					"name": "GroupSixProjectMovieDB"
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/dataflows/DimRental')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('workspaceName'), '/PL2_TransformRentalDate')]",
 			"type": "Microsoft.Synapse/workspaces/pipelines",
 			"apiVersion": "2019-06-01-preview",
@@ -846,7 +895,61 @@
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('workspaceId'), '/dataflows/DimRentalDate')]"
+				"[concat(variables('workspaceId'), '/dataflows/DimRentalDate')]",
+				"[concat(variables('workspaceId'), '/integrationRuntimes/AutoResolveIntegrationRuntime')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/PL3_FactRental')]",
+			"type": "Microsoft.Synapse/workspaces/pipelines",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"activities": [
+					{
+						"name": "Data flow1",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "FactRental",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"sourceDimCustomer": {},
+									"sourceDimFilm": {},
+									"sourceDimRental": {},
+									"sourceDimRentalDate": {},
+									"sink1": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"folder": {
+					"name": "GroupSixProjectMovieDB"
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/dataflows/FactRental')]"
 			]
 		},
 		{
@@ -1801,6 +1904,9 @@
 			"type": "Microsoft.Synapse/workspaces/dataflows",
 			"apiVersion": "2019-06-01-preview",
 			"properties": {
+				"folder": {
+					"name": "Lab2Challenge"
+				},
 				"type": "MappingDataFlow",
 				"typeProperties": {
 					"sources": [
@@ -1922,6 +2028,9 @@
 			"type": "Microsoft.Synapse/workspaces/dataflows",
 			"apiVersion": "2019-06-01-preview",
 			"properties": {
+				"folder": {
+					"name": "Lab2Challenge"
+				},
 				"type": "MappingDataFlow",
 				"typeProperties": {
 					"sources": [
@@ -2380,6 +2489,9 @@
 			"type": "Microsoft.Synapse/workspaces/dataflows",
 			"apiVersion": "2019-06-01-preview",
 			"properties": {
+				"folder": {
+					"name": "Project"
+				},
 				"type": "MappingDataFlow",
 				"typeProperties": {
 					"sources": [
@@ -2548,10 +2660,190 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('workspaceName'), '/DimRental')]",
+			"type": "Microsoft.Synapse/workspaces/dataflows",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"folder": {
+					"name": "Project"
+				},
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"linkedService": {
+								"referenceName": "saw-uofu-is6480-dldwhndev-001-WorkspaceDefaultStorage",
+								"type": "LinkedServiceReference"
+							},
+							"name": "sourceRental"
+						},
+						{
+							"linkedService": {
+								"referenceName": "saw-uofu-is6480-dldwhndev-001-WorkspaceDefaultStorage",
+								"type": "LinkedServiceReference"
+							},
+							"name": "sourceInventory"
+						},
+						{
+							"linkedService": {
+								"referenceName": "saw-uofu-is6480-dldwhndev-001-WorkspaceDefaultStorage",
+								"type": "LinkedServiceReference"
+							},
+							"name": "sourcePayment"
+						}
+					],
+					"sinks": [
+						{
+							"linkedService": {
+								"referenceName": "saw-uofu-is6480-dldwhndev-001-WorkspaceDefaultStorage",
+								"type": "LinkedServiceReference"
+							},
+							"name": "sink1"
+						}
+					],
+					"transformations": [
+						{
+							"name": "select1"
+						},
+						{
+							"name": "join1"
+						},
+						{
+							"name": "join2"
+						},
+						{
+							"name": "surrogateKey1"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          rental_id as short,",
+						"          rental_date as string,",
+						"          inventory_id as short,",
+						"          customer_id as short,",
+						"          return_date as string,",
+						"          staff_id as short,",
+						"          last_update as string",
+						"     ),",
+						"     useSchema: false,",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     format: 'delimited',",
+						"     fileSystem: 'fsuofuis6480dldw001',",
+						"     folderPath: 'IS6480_DW_GroupSix_Project/rental',",
+						"     fileName: 'data.csv',",
+						"     columnDelimiter: ',',",
+						"     escapeChar: '\\\\',",
+						"     quoteChar: '\\\"',",
+						"     columnNamesAsHeader: true) ~> sourceRental",
+						"source(output(",
+						"          inventory_id as short,",
+						"          film_id as short,",
+						"          store_id as short,",
+						"          last_update as string",
+						"     ),",
+						"     useSchema: false,",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     format: 'delimited',",
+						"     fileSystem: 'fsuofuis6480dldw001',",
+						"     folderPath: 'IS6480_DW_GroupSix_Project/inventory',",
+						"     fileName: 'data.csv',",
+						"     columnDelimiter: ',',",
+						"     escapeChar: '\\\\',",
+						"     quoteChar: '\\\"',",
+						"     columnNamesAsHeader: true) ~> sourceInventory",
+						"source(output(",
+						"          payment_id as short,",
+						"          customer_id as short,",
+						"          staff_id as short,",
+						"          rental_id as short,",
+						"          amount as double,",
+						"          payment_date as string",
+						"     ),",
+						"     useSchema: false,",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     format: 'delimited',",
+						"     fileSystem: 'fsuofuis6480dldw001',",
+						"     folderPath: 'IS6480_DW_GroupSix_Project/payment',",
+						"     fileName: 'data.csv',",
+						"     columnDelimiter: ',',",
+						"     escapeChar: '\\\\',",
+						"     quoteChar: '\\\"',",
+						"     columnNamesAsHeader: true) ~> sourcePayment",
+						"sourceRental select(mapColumn(",
+						"          RentalID = rental_id,",
+						"          RentalDate = rental_date,",
+						"          InventoryID = inventory_id,",
+						"          CustomerID = customer_id,",
+						"          ReturnDate = return_date",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: false) ~> select1",
+						"select1, sourceInventory join(InventoryID == inventory_id,",
+						"     joinType:'outer',",
+						"     matchType:'exact',",
+						"     ignoreSpaces: false,",
+						"     broadcast: 'off')~> join1",
+						"join1, sourcePayment join(RentalID == rental_id,",
+						"     joinType:'outer',",
+						"     matchType:'exact',",
+						"     ignoreSpaces: false,",
+						"     broadcast: 'auto')~> join2",
+						"join2 keyGenerate(output(RentalKey as long),",
+						"     startAt: 1L,",
+						"     stepValue: 1L,",
+						"     partitionBy('hash', 1)) ~> surrogateKey1",
+						"surrogateKey1 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     format: 'delta',",
+						"     fileSystem: 'fsuofuis6480dldw001',",
+						"     folderPath: 'IS6480_DW_GroupSix_Project/DimRental',",
+						"     mergeSchema: false,",
+						"     autoCompact: false,",
+						"     optimizedWrite: false,",
+						"     vacuum: 0,",
+						"     deletable: false,",
+						"     insertable: true,",
+						"     updateable: false,",
+						"     upsertable: false,",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     mapColumn(",
+						"          RentalKey,",
+						"          RentalID,",
+						"          RentalDate,",
+						"          InventoryID,",
+						"          CustomerID,",
+						"          ReturnDate,",
+						"          FilmID = film_id,",
+						"          StoreID = store_id,",
+						"          PaymentID = payment_id,",
+						"          CustomerID = customer_id,",
+						"          Amount = amount",
+						"     )) ~> sink1"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/saw-uofu-is6480-dldwhndev-001-WorkspaceDefaultStorage')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('workspaceName'), '/DimRentalDate')]",
 			"type": "Microsoft.Synapse/workspaces/dataflows",
 			"apiVersion": "2019-06-01-preview",
 			"properties": {
+				"folder": {
+					"name": "Project"
+				},
 				"type": "MappingDataFlow",
 				"typeProperties": {
 					"sources": [
@@ -2642,12 +2934,12 @@
 						"     preCommands: [],",
 						"     postCommands: [],",
 						"     mapColumn(",
+						"          DateKey,",
 						"          RentalID,",
 						"          RentalDate,",
 						"          InventoryID,",
 						"          CustomerID,",
 						"          ReturnDate,",
-						"          DateKey,",
 						"          DayOfWeek = Day,",
 						"          WeekOfYear,",
 						"          Month",
@@ -2664,6 +2956,119 @@
 			"type": "Microsoft.Synapse/workspaces/dataflows",
 			"apiVersion": "2019-06-01-preview",
 			"properties": {
+				"folder": {
+					"name": "Project"
+				},
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"linkedService": {
+								"referenceName": "saw-uofu-is6480-dldwhndev-001-WorkspaceDefaultStorage",
+								"type": "LinkedServiceReference"
+							},
+							"name": "dimActorSource"
+						}
+					],
+					"sinks": [
+						{
+							"linkedService": {
+								"referenceName": "saw-uofu-is6480-dldwhndev-001-WorkspaceDefaultStorage",
+								"type": "LinkedServiceReference"
+							},
+							"name": "dimsink",
+							"rejectedDataLinkedService": {
+								"referenceName": "saw-uofu-is6480-dldwhndev-001-WorkspaceDefaultStorage",
+								"type": "LinkedServiceReference"
+							}
+						}
+					],
+					"transformations": [
+						{
+							"name": "dimselect"
+						},
+						{
+							"name": "surrogateKey"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          customer_id as short,",
+						"          store_id as short,",
+						"          first_name as string,",
+						"          last_name as string,",
+						"          email as string,",
+						"          address_id as short,",
+						"          activebool as boolean,",
+						"          create_date as string,",
+						"          last_update as string,",
+						"          active as boolean",
+						"     ),",
+						"     useSchema: false,",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     format: 'delimited',",
+						"     fileSystem: 'fsuofuis6480dldw001',",
+						"     folderPath: 'IS6480_DW_GroupSix_Project/customer',",
+						"     fileName: 'data.csv',",
+						"     columnDelimiter: ',',",
+						"     escapeChar: '\\\\',",
+						"     quoteChar: '\\\"',",
+						"     columnNamesAsHeader: true) ~> dimActorSource",
+						"dimActorSource select(mapColumn(",
+						"          CustomerID = customer_id,",
+						"          StoreID = store_id,",
+						"          FirstName = first_name,",
+						"          LastName = last_name,",
+						"          create_date",
+						"     ),",
+						"     skipDuplicateMapInputs: false,",
+						"     skipDuplicateMapOutputs: false) ~> dimselect",
+						"dimselect keyGenerate(output(CustomerKey as long),",
+						"     startAt: 1L,",
+						"     stepValue: 1L,",
+						"     partitionBy('hash', 1)) ~> surrogateKey",
+						"surrogateKey sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     format: 'delta',",
+						"     fileSystem: 'fsuofuis6480dldw001',",
+						"     folderPath: 'IS6480_DW_GroupSix_Project/DimCustomer',",
+						"     mergeSchema: false,",
+						"     autoCompact: false,",
+						"     optimizedWrite: false,",
+						"     vacuum: 0,",
+						"     deletable: false,",
+						"     insertable: true,",
+						"     updateable: false,",
+						"     upsertable: false,",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     mapColumn(",
+						"          CustomerKey,",
+						"          CustomerID,",
+						"          StoreID,",
+						"          FirstName,",
+						"          LastName,",
+						"          create_date",
+						"     )) ~> dimsink"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/saw-uofu-is6480-dldwhndev-001-WorkspaceDefaultStorage')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/DimSelectCustomer_backup')]",
+			"type": "Microsoft.Synapse/workspaces/dataflows",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"folder": {
+					"name": "Project"
+				},
 				"type": "MappingDataFlow",
 				"typeProperties": {
 					"sources": [
@@ -2707,6 +3112,13 @@
 								"referenceName": "saw-uofu-is6480-dldwhndev-001-WorkspaceDefaultStorage",
 								"type": "LinkedServiceReference"
 							}
+						},
+						{
+							"linkedService": {
+								"referenceName": "saw-uofu-is6480-dldwhndev-001-WorkspaceDefaultStorage",
+								"type": "LinkedServiceReference"
+							},
+							"name": "sink1"
 						}
 					],
 					"transformations": [
@@ -2873,7 +3285,38 @@
 						"          FirstName,",
 						"          LastName,",
 						"          create_date",
-						"     )) ~> dimsink"
+						"     )) ~> dimsink",
+						"surrogateKey1 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     format: 'delta',",
+						"     fileSystem: 'fsuofuis6480dldw001',",
+						"     folderPath: 'IS6480_DW_GroupSix_Project/DimRental',",
+						"     mergeSchema: false,",
+						"     autoCompact: false,",
+						"     optimizedWrite: false,",
+						"     vacuum: 0,",
+						"     deletable: false,",
+						"     insertable: true,",
+						"     updateable: false,",
+						"     upsertable: false,",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     mapColumn(",
+						"          RentalKey,",
+						"          RentalID,",
+						"          RentalDate,",
+						"          InventoryID,",
+						"          CustomerID,",
+						"          ReturnDate,",
+						"          FilmID = film_id,",
+						"          StoreID = store_id,",
+						"          PaymentID = payment_id,",
+						"          CustomerID = customer_id,",
+						"          Amount = amount",
+						"     )) ~> sink1"
 					]
 				}
 			},
@@ -2886,6 +3329,9 @@
 			"type": "Microsoft.Synapse/workspaces/dataflows",
 			"apiVersion": "2019-06-01-preview",
 			"properties": {
+				"folder": {
+					"name": "Lab2Challenge"
+				},
 				"type": "MappingDataFlow",
 				"typeProperties": {
 					"sources": [
@@ -3033,6 +3479,201 @@
 						"          LastUpdate,",
 						"          SpecialFeatures,",
 						"          Fulltext",
+						"     )) ~> sink1"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/saw-uofu-is6480-dldwhndev-001-WorkspaceDefaultStorage')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/FactRental')]",
+			"type": "Microsoft.Synapse/workspaces/dataflows",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"folder": {
+					"name": "Project"
+				},
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"linkedService": {
+								"referenceName": "saw-uofu-is6480-dldwhndev-001-WorkspaceDefaultStorage",
+								"type": "LinkedServiceReference"
+							},
+							"name": "sourceDimCustomer"
+						},
+						{
+							"linkedService": {
+								"referenceName": "saw-uofu-is6480-dldwhndev-001-WorkspaceDefaultStorage",
+								"type": "LinkedServiceReference"
+							},
+							"name": "sourceDimFilm"
+						},
+						{
+							"linkedService": {
+								"referenceName": "saw-uofu-is6480-dldwhndev-001-WorkspaceDefaultStorage",
+								"type": "LinkedServiceReference"
+							},
+							"name": "sourceDimRental"
+						},
+						{
+							"linkedService": {
+								"referenceName": "saw-uofu-is6480-dldwhndev-001-WorkspaceDefaultStorage",
+								"type": "LinkedServiceReference"
+							},
+							"name": "sourceDimRentalDate"
+						}
+					],
+					"sinks": [
+						{
+							"linkedService": {
+								"referenceName": "saw-uofu-is6480-dldwhndev-001-WorkspaceDefaultStorage",
+								"type": "LinkedServiceReference"
+							},
+							"name": "sink1"
+						}
+					],
+					"transformations": [
+						{
+							"name": "union1"
+						},
+						{
+							"name": "select1"
+						},
+						{
+							"name": "join1"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          CustomerKey as long,",
+						"          CustomerID as short,",
+						"          StoreID as short,",
+						"          FirstName as string,",
+						"          LastName as string,",
+						"          create_date as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     format: 'delta',",
+						"     fileSystem: 'fsuofuis6480dldw001',",
+						"     folderPath: 'IS6480_DW_GroupSix_Project/DimCustomer') ~> sourceDimCustomer",
+						"source(output(",
+						"          FilmKey as long,",
+						"          FilmID as short,",
+						"          CategoryID as short,",
+						"          Name as string,",
+						"          Title as string,",
+						"          Description as string,",
+						"          RentalRate as double,",
+						"          Rating as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     format: 'delta',",
+						"     fileSystem: 'fsuofuis6480dldw001',",
+						"     folderPath: 'IS6480_DW_GroupSix_Project/DimFilm') ~> sourceDimFilm",
+						"source(output(",
+						"          RentalKey as long,",
+						"          RentalID as short,",
+						"          RentalDate as string,",
+						"          InventoryID as short,",
+						"          CustomerID as short,",
+						"          ReturnDate as string,",
+						"          FilmID as short,",
+						"          StoreID as short,",
+						"          PaymentID as short,",
+						"          Amount as double",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     format: 'delta',",
+						"     fileSystem: 'fsuofuis6480dldw001',",
+						"     folderPath: 'IS6480_DW_GroupSix_Project/DimRental') ~> sourceDimRental",
+						"source(output(",
+						"          RentalID as short,",
+						"          RentalDate as date,",
+						"          InventoryID as short,",
+						"          CustomerID as short,",
+						"          ReturnDate as date,",
+						"          DateKey as long,",
+						"          DayOfWeek as integer,",
+						"          WeekOfYear as integer,",
+						"          Month as integer",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     format: 'delta',",
+						"     fileSystem: 'fsuofuis6480dldw001',",
+						"     folderPath: 'IS6480_DW_GroupSix_Project/DimDate') ~> sourceDimRentalDate",
+						"sourceDimRental, sourceDimCustomer union(byName: true)~> union1",
+						"union1 select(mapColumn(",
+						"          RentalKey,",
+						"          RentalID,",
+						"          RentalDate,",
+						"          InventoryID,",
+						"          CustomerID,",
+						"          ReturnDate,",
+						"          FilmID,",
+						"          StoreID,",
+						"          PaymentID,",
+						"          Amount,",
+						"          CustomerKey,",
+						"          FirstName,",
+						"          LastName,",
+						"          create_date",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> select1",
+						"select1, sourceDimFilm join(select1@FilmID == FilmKey,",
+						"     joinType:'outer',",
+						"     matchType:'exact',",
+						"     ignoreSpaces: false,",
+						"     broadcast: 'auto')~> join1",
+						"join1 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     format: 'delta',",
+						"     fileSystem: 'fsuofuis6480dldw001',",
+						"     folderPath: 'IS6480_DW_GroupSix_Project/FactRental',",
+						"     mergeSchema: false,",
+						"     autoCompact: false,",
+						"     optimizedWrite: false,",
+						"     vacuum: 0,",
+						"     deletable: false,",
+						"     insertable: true,",
+						"     updateable: false,",
+						"     upsertable: false,",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     mapColumn(",
+						"          CustomerKey,",
+						"          RentalKey,",
+						"          FilmKey,",
+						"          RentalDate,",
+						"          InventoryID,",
+						"          CustomerID,",
+						"          ReturnDate,",
+						"          StoreID,",
+						"          PaymentID,",
+						"          Amount,",
+						"          FirstName,",
+						"          LastName,",
+						"          create_date,",
+						"          FilmID = sourceDimFilm@FilmID,",
+						"          CategoryID,",
+						"          Name,",
+						"          Title,",
+						"          Description,",
+						"          RentalRate,",
+						"          Rating",
 						"     )) ~> sink1"
 					]
 				}
