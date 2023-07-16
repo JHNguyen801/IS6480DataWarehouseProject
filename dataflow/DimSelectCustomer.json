@@ -44,6 +44,13 @@
 						"referenceName": "saw-uofu-is6480-dldwhndev-001-WorkspaceDefaultStorage",
 						"type": "LinkedServiceReference"
 					}
+				},
+				{
+					"linkedService": {
+						"referenceName": "saw-uofu-is6480-dldwhndev-001-WorkspaceDefaultStorage",
+						"type": "LinkedServiceReference"
+					},
+					"name": "sink1"
 				}
 			],
 			"transformations": [
@@ -210,7 +217,38 @@
 				"          FirstName,",
 				"          LastName,",
 				"          create_date",
-				"     )) ~> dimsink"
+				"     )) ~> dimsink",
+				"surrogateKey1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'delta',",
+				"     fileSystem: 'fsuofuis6480dldw001',",
+				"     folderPath: 'IS6480_DW_GroupSix_Project/DimRental',",
+				"     mergeSchema: false,",
+				"     autoCompact: false,",
+				"     optimizedWrite: false,",
+				"     vacuum: 0,",
+				"     deletable: false,",
+				"     insertable: true,",
+				"     updateable: false,",
+				"     upsertable: false,",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     mapColumn(",
+				"          RentalKey,",
+				"          RentalID,",
+				"          RentalDate,",
+				"          InventoryID,",
+				"          CustomerID,",
+				"          ReturnDate,",
+				"          FilmID = film_id,",
+				"          StoreID = store_id,",
+				"          PaymentID = payment_id,",
+				"          CustomerID = customer_id,",
+				"          Amount = amount",
+				"     )) ~> sink1"
 			]
 		}
 	}
