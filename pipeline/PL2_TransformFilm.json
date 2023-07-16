@@ -1,5 +1,5 @@
 {
-	"name": "PL2_TransformCustomerRental",
+	"name": "PL2_TransformFilm",
 	"properties": {
 		"activities": [
 			{
@@ -16,7 +16,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataflow": {
-						"referenceName": "DimSelectCustomer",
+						"referenceName": "DimFilmTransform",
 						"type": "DataFlowReference"
 					},
 					"compute": {
