@@ -1,6 +1,9 @@
 {
 	"name": "CombineDVDRentalFilmRentalDBFilmExtract",
 	"properties": {
+		"folder": {
+			"name": "Lab2Challenge"
+		},
 		"type": "MappingDataFlow",
 		"typeProperties": {
 			"sources": [
