@@ -1,9 +1,9 @@
 {
-	"name": "DimActor",
+	"name": "P2_DimActor",
 	"properties": {
 		"activities": [
 			{
-				"name": "PL2_DimActor",
+				"name": "DimActor",
 				"type": "ExecuteDataFlow",
 				"dependsOn": [],
 				"policy": {

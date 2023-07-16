@@ -1,9 +1,9 @@
 {
-	"name": "PL1_Source_Instructor_DVDRental_Any_CSV",
+	"name": "PL1_ExtractSource_to_Storage",
 	"properties": {
 		"activities": [
 			{
-				"name": "CopyAnyDataset",
+				"name": "CopyDatasetFromSource",
 				"description": "Copies any dataset from the DVDRental source given the dataset name as a parameter",
 				"type": "Copy",
 				"dependsOn": [],
