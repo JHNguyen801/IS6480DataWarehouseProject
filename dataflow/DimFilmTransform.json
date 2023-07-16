@@ -46,13 +46,13 @@
 					"name": "join2"
 				},
 				{
-					"name": "FilmKey"
-				},
-				{
 					"name": "select1"
 				},
 				{
 					"name": "select2"
+				},
+				{
+					"name": "surrogateKey1"
 				}
 			],
 			"scriptLines": [
@@ -117,7 +117,7 @@
 				"     escapeChar: '\\\\',",
 				"     quoteChar: '\\\"',",
 				"     columnNamesAsHeader: true) ~> sourceFilm",
-				"sourceFilm, sourceFilmCategory join(sourceFilm@film_id == sourceFilmCategory@film_id,",
+				"surrogateKey1, sourceFilmCategory join(sourceFilm@film_id == sourceFilmCategory@film_id,",
 				"     joinType:'outer',",
 				"     matchType:'exact',",
 				"     ignoreSpaces: false,",
@@ -127,16 +127,14 @@
 				"     matchType:'exact',",
 				"     ignoreSpaces: false,",
 				"     broadcast: 'auto')~> join2",
-				"select1 keyGenerate(output(FilmKey as long),",
-				"     startAt: 1L,",
-				"     stepValue: 1L,",
-				"     partitionBy('hash', 1)) ~> FilmKey",
 				"join2 select(mapColumn(",
+				"          FilmKey,",
 				"          FilmID = film_id,",
 				"          Category = name,",
 				"          Title = title,",
 				"          Description = description,",
-				"          RentalRate = rental_rate",
+				"          RentalRate = rental_rate,",
+				"          rating",
 				"     ),",
 				"     partitionBy('hash', 1),",
 				"     skipDuplicateMapInputs: false,",
@@ -154,12 +152,17 @@
 				"          rating,",
 				"          special_features,",
 				"          fulltext,",
+				"          FilmKey,",
 				"          category_id,",
 				"          last_update = sourceFilmCategory@last_update",
 				"     ),",
 				"     skipDuplicateMapInputs: false,",
 				"     skipDuplicateMapOutputs: false) ~> select2",
-				"FilmKey sink(allowSchemaDrift: true,",
+				"sourceFilm keyGenerate(output(FilmKey as long),",
+				"     startAt: 1L,",
+				"     stepValue: 1L,",
+				"     partitionBy('hash', 1)) ~> surrogateKey1",
+				"select1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     format: 'delta',",
 				"     fileSystem: 'fsuofuis6480dldw001',",
@@ -178,12 +181,12 @@
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
 				"     mapColumn(",
+				"          FilmKey,",
 				"          film_id = FilmID,",
-				"          name = Category,",
 				"          title = Title,",
 				"          description = Description,",
 				"          rental_rate = RentalRate,",
-				"          FilmKey",
+				"          rating",
 				"     )) ~> sink1"
 			]
 		}
