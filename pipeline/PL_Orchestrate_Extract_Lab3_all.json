@@ -21,7 +21,7 @@
 							"userProperties": [],
 							"typeProperties": {
 								"pipeline": {
-									"referenceName": "PL_Source_UofU_IS6480_Instructor_DVDRental_Any_Bronze_UofU_IS6480_Instructor_DVDRental_Any_CSV",
+									"referenceName": "PL_Source_UofU_IS6480_Instructor_DVDRental_Any_Bronze_UofU_IS6480_Instructor_DVDRental_Any_CSV1",
 									"type": "PipelineReference"
 								},
 								"waitOnCompletion": true,
