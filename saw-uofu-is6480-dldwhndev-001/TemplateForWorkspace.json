@@ -926,7 +926,16 @@
 									"sourceDimFilm": {},
 									"sourceDimRental": {},
 									"sourceDimRentalDate": {},
-									"sink1": {}
+									"sink1": {
+										"datasetName": "FilmExtract"
+									}
+								},
+								"linkedServiceParameters": {
+									"sink1": {
+										"schemaLinkedService": {
+											"datasetName": "FilmExtract"
+										}
+									}
 								}
 							},
 							"staging": {},
@@ -4088,19 +4097,23 @@
 						"     broadcast: 'auto')~> join3",
 						"join3 sink(allowSchemaDrift: true,",
 						"     validateSchema: false,",
-						"     format: 'delimited',",
+						"     format: 'delta',",
 						"     fileSystem: 'fsuofuis6480dldw001',",
 						"     folderPath: 'IS6480_DW_GroupSix_Project/FactRental',",
-						"     columnDelimiter: ',',",
-						"     escapeChar: '\\\\',",
-						"     quoteChar: '\\\"',",
-						"     columnNamesAsHeader: true,",
+						"     mergeSchema: false,",
+						"     autoCompact: false,",
+						"     optimizedWrite: false,",
+						"     vacuum: 0,",
+						"     deletable: false,",
+						"     insertable: true,",
+						"     updateable: false,",
+						"     upsertable: false,",
 						"     umask: 0022,",
 						"     preCommands: [],",
 						"     postCommands: [],",
+						"     saveOrder: 1,",
 						"     mapColumn(",
 						"          RentalKey,",
-						"          CustomerKey,",
 						"          FilmKey,",
 						"          DateKey,",
 						"          RentalID,",
@@ -4113,6 +4126,7 @@
 						"          Category,",
 						"          Title,",
 						"          Rating,",
+						"          CustomerKey,",
 						"          CustomerID = sourceDimCustomer@CustomerID,",
 						"          StoreID = sourceDimCustomer@StoreID,",
 						"          FirstName,",
