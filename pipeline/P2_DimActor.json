@@ -16,7 +16,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataflow": {
-						"referenceName": "DimExtract",
+						"referenceName": "DimExtractChallenge2",
 						"type": "DataFlowReference"
 					},
 					"compute": {
