@@ -2651,7 +2651,6 @@
 						"     format: 'delta',",
 						"     fileSystem: 'fsuofuis6480dldw001',",
 						"     folderPath: 'IS6480_DW_GroupSix_Project/DimFilm',",
-						"     deltaTruncate: true,",
 						"     mergeSchema: false,",
 						"     autoCompact: false,",
 						"     optimizedWrite: false,",
