@@ -17,7 +17,19 @@
 				"typeProperties": {
 					"dataflow": {
 						"referenceName": "FactRental",
-						"type": "DataFlowReference"
+						"type": "DataFlowReference",
+						"datasetParameters": {
+							"sink1": {
+								"datasetName": "FilmExtract"
+							}
+						},
+						"linkedServiceParameters": {
+							"sink1": {
+								"schemaLinkedService": {
+									"datasetName": "FilmExtract"
+								}
+							}
+						}
 					},
 					"compute": {
 						"coreCount": 8,
