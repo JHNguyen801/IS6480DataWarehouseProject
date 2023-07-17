@@ -793,7 +793,8 @@
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('workspaceId'), '/dataflows/DimFilmTransform')]"
+				"[concat(variables('workspaceId'), '/dataflows/DimFilmTransform')]",
+				"[concat(variables('workspaceId'), '/integrationRuntimes/AutoResolveIntegrationRuntime')]"
 			]
 		},
 		{
@@ -2664,11 +2665,12 @@
 						"     postCommands: [],",
 						"     mapColumn(",
 						"          FilmKey,",
-						"          film_id = FilmID,",
-						"          title = Title,",
-						"          description = Description,",
-						"          rental_rate = RentalRate,",
-						"          rating = Rating",
+						"          FilmID,",
+						"          Category,",
+						"          Title,",
+						"          Description,",
+						"          RentalRate,",
+						"          Rating",
 						"     )) ~> sink1"
 					]
 				}
