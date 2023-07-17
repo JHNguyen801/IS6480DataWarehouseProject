@@ -2,7 +2,7 @@
 	"name": "DimRental_backup2",
 	"properties": {
 		"folder": {
-			"name": "Project"
+			"name": "Project/Backup"
 		},
 		"type": "MappingDataFlow",
 		"typeProperties": {
