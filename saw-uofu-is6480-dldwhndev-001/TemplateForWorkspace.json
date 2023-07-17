@@ -1004,8 +1004,7 @@
 				"lastPublishTime": "2023-07-10T05:44:56Z"
 			},
 			"dependsOn": [
-				"[concat(variables('workspaceId'), '/dataflows/CleanUofUIS6480InstructorRentalDB_FilmExtract')]",
-				"[concat(variables('workspaceId'), '/integrationRuntimes/AutoResolveIntegrationRuntime')]"
+				"[concat(variables('workspaceId'), '/dataflows/CleanUofUIS6480InstructorRentalDB_FilmExtract')]"
 			]
 		},
 		{
