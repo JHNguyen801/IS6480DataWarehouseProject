@@ -55,6 +55,26 @@
 					},
 					"waitOnCompletion": true
 				}
+			},
+			{
+				"name": "PaymentBronzeToSilver",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "ForEach1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "PL_Bronze_UofU_IS6480_Instructor_DVDRental_Payment_Silver_UofU_IS6480_Instructor_DVDRental_Payment_Delta",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
 			}
 		],
 		"folder": {
