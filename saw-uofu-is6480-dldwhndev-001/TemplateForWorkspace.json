@@ -976,7 +976,7 @@
 									"userProperties": [],
 									"typeProperties": {
 										"pipeline": {
-											"referenceName": "PL_Source_UofU_IS6480_Instructor_DVDRental_Any_Bronze_UofU_IS6480_Instructor_DVDRental_Any_CSV1",
+											"referenceName": "PL_Source_UofU_IS6480_Instructor_RentalDB_Any_Bronze_UofU_IS6480_Instructor_RentalDB_Any_CSV",
 											"type": "PipelineReference"
 										},
 										"waitOnCompletion": true,
@@ -1003,7 +1003,7 @@
 				"lastPublishTime": "2023-07-06T02:07:36Z"
 			},
 			"dependsOn": [
-				"[concat(variables('workspaceId'), '/pipelines/PL_Source_UofU_IS6480_Instructor_DVDRental_Any_Bronze_UofU_IS6480_Instructor_DVDRental_Any_CSV1')]"
+				"[concat(variables('workspaceId'), '/pipelines/PL_Source_UofU_IS6480_Instructor_RentalDB_Any_Bronze_UofU_IS6480_Instructor_RentalDB_Any_CSV')]"
 			]
 		},
 		{
