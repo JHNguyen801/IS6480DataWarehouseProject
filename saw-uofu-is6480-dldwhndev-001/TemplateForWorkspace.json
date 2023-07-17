@@ -952,6 +952,63 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('workspaceName'), '/PL_Bronze_UofU_IS6480_Instructor_DVDRental_Film_Silver_UofU_IS6480_Instructor_DVDRental_Film_Delta')]",
+			"type": "Microsoft.Synapse/workspaces/pipelines",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"activities": [
+					{
+						"name": "ExecuteCleanUofUIS6480InstructorDVDRentalFilm",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.10:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "CleanUofUIS6480InstructorRentalDB_FilmExtract",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"UIS6480InstructorDVDRentalFilm": {},
+									"sink": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"parameters": {
+					"datasetName": {
+						"type": "string"
+					}
+				},
+				"folder": {
+					"name": "2_BronzeToSilver"
+				},
+				"annotations": [],
+				"lastPublishTime": "2023-07-10T05:44:56Z"
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/dataflows/CleanUofUIS6480InstructorRentalDB_FilmExtract')]",
+				"[concat(variables('workspaceId'), '/integrationRuntimes/AutoResolveIntegrationRuntime')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('workspaceName'), '/PL_Orchestrate_Extract_Lab3_all')]",
 			"type": "Microsoft.Synapse/workspaces/pipelines",
 			"apiVersion": "2019-06-01-preview",
@@ -987,6 +1044,27 @@
 											}
 										}
 									}
+								},
+								{
+									"name": "Execute Pipeline2",
+									"type": "ExecutePipeline",
+									"dependsOn": [
+										{
+											"activity": "Execute Pipeline1",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"userProperties": [],
+									"typeProperties": {
+										"pipeline": {
+											"referenceName": "PL_Bronze_UofU_IS6480_Instructor_DVDRental_Film_Silver_UofU_IS6480_Instructor_DVDRental_Film_Delta",
+											"type": "PipelineReference"
+										},
+										"waitOnCompletion": true,
+										"parameters": {}
+									}
 								}
 							]
 						}
@@ -1003,7 +1081,8 @@
 				"lastPublishTime": "2023-07-06T02:07:36Z"
 			},
 			"dependsOn": [
-				"[concat(variables('workspaceId'), '/pipelines/PL_Source_UofU_IS6480_Instructor_DVDRental_Any_Bronze_UofU_IS6480_Instructor_DVDRental_Any_CSV')]"
+				"[concat(variables('workspaceId'), '/pipelines/PL_Source_UofU_IS6480_Instructor_DVDRental_Any_Bronze_UofU_IS6480_Instructor_DVDRental_Any_CSV')]",
+				"[concat(variables('workspaceId'), '/pipelines/PL_Bronze_UofU_IS6480_Instructor_DVDRental_Film_Silver_UofU_IS6480_Instructor_DVDRental_Film_Delta')]"
 			]
 		},
 		{
@@ -1240,63 +1319,6 @@
 			"dependsOn": [
 				"[concat(variables('workspaceId'), '/datasets/DS_Source_UofU_IS6480_Instructor_DVDRental_Any_CSV')]",
 				"[concat(variables('workspaceId'), '/datasets/DS_Bronze_UofU_IS6480_Instructor_DVDRental_Any_CSV')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('workspaceName'), '/PL_Source_UofU_IS6480_Instructor_DVDRental_Any_Bronze_UofU_IS6480_Instructor_DVDRental_Any_CSV1')]",
-			"type": "Microsoft.Synapse/workspaces/pipelines",
-			"apiVersion": "2019-06-01-preview",
-			"properties": {
-				"activities": [
-					{
-						"name": "Data flow1",
-						"type": "ExecuteDataFlow",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"dataflow": {
-								"referenceName": "CleanUofUIS6480InstructorRentalDB_FilmExtract",
-								"type": "DataFlowReference",
-								"parameters": {},
-								"datasetParameters": {
-									"UIS6480InstructorDVDRentalFilm": {},
-									"sink": {}
-								}
-							},
-							"staging": {},
-							"compute": {
-								"coreCount": 8,
-								"computeType": "General"
-							},
-							"traceLevel": "Fine"
-						}
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {},
-					"cancelAfter": {}
-				},
-				"parameters": {
-					"datasetName": {
-						"type": "string",
-						"defaultValue": "actor"
-					}
-				},
-				"folder": {
-					"name": "2_BronzeToSilver"
-				},
-				"annotations": [],
-				"lastPublishTime": "2023-07-10T05:44:56Z"
-			},
-			"dependsOn": [
-				"[concat(variables('workspaceId'), '/dataflows/CleanUofUIS6480InstructorRentalDB_FilmExtract')]"
 			]
 		},
 		{
@@ -1875,7 +1897,7 @@
 						"     validateSchema: false,",
 						"     format: 'delta',",
 						"     fileSystem: 'fsuofuis6480dldw001',",
-						"     folderPath: 'Silver/UofU/IS6480/Instructor/RentalDB/FilmExtract',",
+						"     folderPath: 'Silver/UofU/IS6480/Instructor/RentalDB/Film',",
 						"     overwrite: true,",
 						"     mergeSchema: false,",
 						"     autoCompact: false,",
