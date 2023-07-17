@@ -35,6 +35,15 @@
 						}
 					]
 				}
+			},
+			{
+				"name": "FilmBronzeToSilver",
+				"type": "ExecutePipeline",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"waitOnCompletion": true
+				}
 			}
 		],
 		"folder": {

@@ -1,9 +1,9 @@
 {
-	"name": "PL_Source_UofU_IS6480_Instructor_DVDRental_Any_Bronze_UofU_IS6480_Instructor_DVDRental_Any_CSV1",
+	"name": "PL_Bronze_UofU_IS6480_Instructor_DVDRental_Film_Silver_UofU_IS6480_Instructor_DVDRental_Film_Delta",
 	"properties": {
 		"activities": [
 			{
-				"name": "Data flow1",
+				"name": "ExecuteCleanUofUIS6480InstructorDVDRentalFilm",
 				"type": "ExecuteDataFlow",
 				"dependsOn": [],
 				"policy": {
