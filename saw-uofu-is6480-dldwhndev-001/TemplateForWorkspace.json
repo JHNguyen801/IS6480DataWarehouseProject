@@ -948,7 +948,8 @@
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('workspaceId'), '/dataflows/FactRental')]"
+				"[concat(variables('workspaceId'), '/dataflows/FactRental')]",
+				"[concat(variables('workspaceId'), '/integrationRuntimes/AutoResolveIntegrationRuntime')]"
 			]
 		},
 		{
@@ -3905,6 +3906,232 @@
 		},
 		{
 			"name": "[concat(parameters('workspaceName'), '/FactRental')]",
+			"type": "Microsoft.Synapse/workspaces/dataflows",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"folder": {
+					"name": "Project"
+				},
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"linkedService": {
+								"referenceName": "saw-uofu-is6480-dldwhndev-001-WorkspaceDefaultStorage",
+								"type": "LinkedServiceReference"
+							},
+							"name": "sourceDimCustomer"
+						},
+						{
+							"linkedService": {
+								"referenceName": "saw-uofu-is6480-dldwhndev-001-WorkspaceDefaultStorage",
+								"type": "LinkedServiceReference"
+							},
+							"name": "sourceDimFilm"
+						},
+						{
+							"linkedService": {
+								"referenceName": "saw-uofu-is6480-dldwhndev-001-WorkspaceDefaultStorage",
+								"type": "LinkedServiceReference"
+							},
+							"name": "sourceDimRental"
+						},
+						{
+							"linkedService": {
+								"referenceName": "saw-uofu-is6480-dldwhndev-001-WorkspaceDefaultStorage",
+								"type": "LinkedServiceReference"
+							},
+							"name": "sourceDimRentalDate"
+						}
+					],
+					"sinks": [
+						{
+							"linkedService": {
+								"referenceName": "saw-uofu-is6480-dldwhndev-001-WorkspaceDefaultStorage",
+								"type": "LinkedServiceReference"
+							},
+							"name": "sink1"
+						}
+					],
+					"transformations": [
+						{
+							"name": "join1"
+						},
+						{
+							"name": "join2"
+						},
+						{
+							"name": "select1"
+						},
+						{
+							"name": "select2"
+						},
+						{
+							"name": "join3"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          CustomerKey as long,",
+						"          CustomerID as short,",
+						"          StoreID as short,",
+						"          FirstName as string,",
+						"          LastName as string,",
+						"          create_date as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     format: 'delta',",
+						"     fileSystem: 'fsuofuis6480dldw001',",
+						"     folderPath: 'IS6480_DW_GroupSix_Project/DimCustomer') ~> sourceDimCustomer",
+						"source(output(",
+						"          FilmKey as long,",
+						"          FilmID as short,",
+						"          Category as string,",
+						"          Title as string,",
+						"          Description as string,",
+						"          RentalRate as double,",
+						"          Rating as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     format: 'delta',",
+						"     fileSystem: 'fsuofuis6480dldw001',",
+						"     folderPath: 'IS6480_DW_GroupSix_Project/DimFilm') ~> sourceDimFilm",
+						"source(output(",
+						"          RentalKey as long,",
+						"          RentalID as short,",
+						"          CustomerID as short,",
+						"          Amount as double,",
+						"          PaymentDate as string,",
+						"          RentalDate as string,",
+						"          ReturnDate as string,",
+						"          InventoryID as short,",
+						"          FilmID as short,",
+						"          StoreID as short",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     format: 'delta',",
+						"     fileSystem: 'fsuofuis6480dldw001',",
+						"     folderPath: 'IS6480_DW_GroupSix_Project/DimRental') ~> sourceDimRental",
+						"source(output(",
+						"          RentalID as short,",
+						"          RentalDate as date,",
+						"          InventoryID as short,",
+						"          CustomerID as short,",
+						"          ReturnDate as date,",
+						"          DateKey as long,",
+						"          DayOfWeek as integer,",
+						"          WeekOfYear as integer,",
+						"          Month as integer",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     format: 'delta',",
+						"     fileSystem: 'fsuofuis6480dldw001',",
+						"     folderPath: 'IS6480_DW_GroupSix_Project/DimDate') ~> sourceDimRentalDate",
+						"sourceDimRental, sourceDimRentalDate join(sourceDimRental@RentalID == sourceDimRentalDate@RentalID,",
+						"     joinType:'inner',",
+						"     matchType:'exact',",
+						"     ignoreSpaces: false,",
+						"     broadcast: 'auto')~> join1",
+						"select1, sourceDimFilm join(select1@FilmID == sourceDimFilm@FilmID,",
+						"     joinType:'right',",
+						"     matchType:'exact',",
+						"     ignoreSpaces: false,",
+						"     broadcast: 'auto')~> join2",
+						"join1 select(mapColumn(",
+						"          RentalKey,",
+						"          RentalID = sourceDimRental@RentalID,",
+						"          CustomerID = sourceDimRental@CustomerID,",
+						"          Amount,",
+						"          PaymentDate,",
+						"          RentalDate = sourceDimRental@RentalDate,",
+						"          ReturnDate = sourceDimRental@ReturnDate,",
+						"          InventoryID = sourceDimRental@InventoryID,",
+						"          FilmID,",
+						"          StoreID,",
+						"          DateKey,",
+						"          DayOfWeek,",
+						"          WeekOfYear,",
+						"          Month",
+						"     ),",
+						"     skipDuplicateMapInputs: false,",
+						"     skipDuplicateMapOutputs: false) ~> select1",
+						"join2 select(mapColumn(",
+						"          RentalKey,",
+						"          FilmKey,",
+						"          DateKey,",
+						"          RentalID,",
+						"          CustomerID,",
+						"          Amount,",
+						"          PaymentDate,",
+						"          StoreID,",
+						"          DayOfWeek,",
+						"          WeekOfYear,",
+						"          Month,",
+						"          FilmID = sourceDimFilm@FilmID,",
+						"          Category,",
+						"          Title,",
+						"          Rating",
+						"     ),",
+						"     skipDuplicateMapInputs: false,",
+						"     skipDuplicateMapOutputs: false) ~> select2",
+						"select2, sourceDimCustomer join(select2@CustomerID == CustomerKey,",
+						"     joinType:'inner',",
+						"     matchType:'exact',",
+						"     ignoreSpaces: false,",
+						"     broadcast: 'auto')~> join3",
+						"join3 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     format: 'delta',",
+						"     fileSystem: 'fsuofuis6480dldw001',",
+						"     folderPath: 'IS6480_DW_GroupSix_Project/FactRental',",
+						"     mergeSchema: false,",
+						"     autoCompact: false,",
+						"     optimizedWrite: false,",
+						"     vacuum: 0,",
+						"     deletable: false,",
+						"     insertable: true,",
+						"     updateable: false,",
+						"     upsertable: false,",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     mapColumn(",
+						"          RentalKey,",
+						"          CustomerKey,",
+						"          FilmKey,",
+						"          DateKey,",
+						"          RentalID,",
+						"          Amount,",
+						"          PaymentDate,",
+						"          DayOfWeek,",
+						"          WeekOfYear,",
+						"          Month,",
+						"          FilmID,",
+						"          Category,",
+						"          Title,",
+						"          Rating,",
+						"          CustomerID = sourceDimCustomer@CustomerID,",
+						"          StoreID = sourceDimCustomer@StoreID,",
+						"          FirstName,",
+						"          LastName",
+						"     )) ~> sink1"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/saw-uofu-is6480-dldwhndev-001-WorkspaceDefaultStorage')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/FactRental_backup')]",
 			"type": "Microsoft.Synapse/workspaces/dataflows",
 			"apiVersion": "2019-06-01-preview",
 			"properties": {
