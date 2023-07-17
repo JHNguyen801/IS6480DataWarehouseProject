@@ -1,0 +1,42 @@
+{
+	"name": "PL_Bronze_UofU_IS6480_Instructor_DVDRental_Payment_Silver_UofU_IS6480_Instructor_DVDRental_Payment_Delta",
+	"properties": {
+		"activities": [
+			{
+				"name": "ExecuteCleanUofUIS6480InstructorDVDRentalPayment",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.10:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "CleanUofUIS6480InstructorRentalDB_FilmExtract",
+						"type": "DataFlowReference"
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine"
+				}
+			}
+		],
+		"parameters": {
+			"datasetName": {
+				"type": "string"
+			}
+		},
+		"folder": {
+			"name": "2_BronzeToSilver"
+		},
+		"annotations": [],
+		"lastPublishTime": "2023-07-10T05:44:56Z"
+	},
+	"type": "Microsoft.Synapse/workspaces/pipelines"
+}
