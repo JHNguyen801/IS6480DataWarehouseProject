@@ -948,8 +948,7 @@
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('workspaceId'), '/dataflows/FactRental')]",
-				"[concat(variables('workspaceId'), '/integrationRuntimes/AutoResolveIntegrationRuntime')]"
+				"[concat(variables('workspaceId'), '/dataflows/FactRental')]"
 			]
 		},
 		{
@@ -4433,7 +4432,7 @@
 			"apiVersion": "2019-06-01-preview",
 			"properties": {
 				"content": {
-					"query": "-- This is auto-generated code\nSELECT\n    TOP 100 *\nFROM\n    OPENROWSET(\n        BULK 'https://sa6480dldwhndev001.dfs.core.windows.net/fsuofuis6480dldw001/IS6480_DW_GroupSix_Project/FactRental/',\n        FORMAT = 'DELTA'\n    ) AS [result]\n",
+					"query": "\n\n-- This is auto-generated code\n-- CREATE VIEW\nSELECT\n    *\nFROM\n    OPENROWSET(\n        BULK 'https://sa6480dldwhndev001.dfs.core.windows.net/fsuofuis6480dldw001/IS6480_DW_GroupSix_Project/FactRental/',\n        FORMAT = 'DELTA'\n    ) AS [result]\n",
 					"metadata": {
 						"language": "sql"
 					},
