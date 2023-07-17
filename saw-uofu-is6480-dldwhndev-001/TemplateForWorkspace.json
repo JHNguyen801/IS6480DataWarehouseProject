@@ -1027,7 +1027,7 @@
 						"userProperties": [],
 						"typeProperties": {
 							"dataflow": {
-								"referenceName": "CleanUofUIS6480InstructorRentalDB_FilmExtract",
+								"referenceName": "CleanUofUIS6480InstructorDVDRentalPayment",
 								"type": "DataFlowReference",
 								"parameters": {},
 								"datasetParameters": {
@@ -1060,7 +1060,8 @@
 				"lastPublishTime": "2023-07-10T05:44:56Z"
 			},
 			"dependsOn": [
-				"[concat(variables('workspaceId'), '/dataflows/CleanUofUIS6480InstructorRentalDB_FilmExtract')]"
+				"[concat(variables('workspaceId'), '/dataflows/CleanUofUIS6480InstructorDVDRentalPayment')]",
+				"[concat(variables('workspaceId'), '/integrationRuntimes/AutoResolveIntegrationRuntime')]"
 			]
 		},
 		{
