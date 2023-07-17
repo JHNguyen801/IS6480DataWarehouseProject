@@ -909,7 +909,7 @@
 						"type": "ExecuteDataFlow",
 						"dependsOn": [],
 						"policy": {
-							"timeout": "0.12:00:00",
+							"timeout": "0.10:00:00",
 							"retry": 0,
 							"retryIntervalInSeconds": 30,
 							"secureOutput": false,
@@ -926,16 +926,7 @@
 									"sourceDimFilm": {},
 									"sourceDimRental": {},
 									"sourceDimRentalDate": {},
-									"sink1": {
-										"datasetName": "FilmExtract"
-									}
-								},
-								"linkedServiceParameters": {
-									"sink1": {
-										"schemaLinkedService": {
-											"datasetName": "FilmExtract"
-										}
-									}
+									"sink1": {}
 								}
 							},
 							"staging": {},
@@ -957,7 +948,8 @@
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('workspaceId'), '/dataflows/FactRental')]"
+				"[concat(variables('workspaceId'), '/dataflows/FactRental')]",
+				"[concat(variables('workspaceId'), '/integrationRuntimes/AutoResolveIntegrationRuntime')]"
 			]
 		},
 		{
