@@ -2793,7 +2793,7 @@
 						"     ignoreSpaces: false,",
 						"     broadcast: 'auto')~> join1",
 						"select2, sourceCategory join(select2@category_id == sourceCategory@category_id,",
-						"     joinType:'outer',",
+						"     joinType:'inner',",
 						"     matchType:'exact',",
 						"     ignoreSpaces: false,",
 						"     broadcast: 'auto')~> join2",
