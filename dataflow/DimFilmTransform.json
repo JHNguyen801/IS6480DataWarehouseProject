@@ -134,9 +134,8 @@
 				"          Title = title,",
 				"          Description = description,",
 				"          RentalRate = rental_rate,",
-				"          rating",
+				"          Rating = rating",
 				"     ),",
-				"     partitionBy('hash', 1),",
 				"     skipDuplicateMapInputs: false,",
 				"     skipDuplicateMapOutputs: false) ~> select1",
 				"join1 select(mapColumn(",
@@ -178,15 +177,13 @@
 				"     umask: 0022,",
 				"     preCommands: [],",
 				"     postCommands: [],",
-				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true,",
 				"     mapColumn(",
 				"          FilmKey,",
 				"          film_id = FilmID,",
 				"          title = Title,",
 				"          description = Description,",
 				"          rental_rate = RentalRate,",
-				"          rating",
+				"          rating = Rating",
 				"     )) ~> sink1"
 			]
 		}
