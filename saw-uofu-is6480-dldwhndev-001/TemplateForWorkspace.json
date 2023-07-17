@@ -845,8 +845,7 @@
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('workspaceId'), '/dataflows/DimRental')]",
-				"[concat(variables('workspaceId'), '/integrationRuntimes/AutoResolveIntegrationRuntime')]"
+				"[concat(variables('workspaceId'), '/dataflows/DimRental')]"
 			]
 		},
 		{
@@ -3954,13 +3953,19 @@
 					],
 					"transformations": [
 						{
-							"name": "union1"
-						},
-						{
 							"name": "join1"
 						},
 						{
 							"name": "join2"
+						},
+						{
+							"name": "select1"
+						},
+						{
+							"name": "select2"
+						},
+						{
+							"name": "join3"
 						}
 					],
 					"scriptLines": [
@@ -3980,13 +3985,11 @@
 						"     folderPath: 'IS6480_DW_GroupSix_Project/DimCustomer') ~> sourceDimCustomer",
 						"source(output(",
 						"          FilmKey as long,",
-						"          FilmID as short,",
-						"          CategoryID as short,",
-						"          Name as string,",
-						"          Title as string,",
-						"          Description as string,",
-						"          RentalRate as double,",
-						"          Rating as string",
+						"          film_id as short,",
+						"          title as string,",
+						"          description as string,",
+						"          rental_rate as double,",
+						"          rating as string",
 						"     ),",
 						"     allowSchemaDrift: true,",
 						"     validateSchema: false,",
@@ -3997,25 +4000,21 @@
 						"source(output(",
 						"          RentalKey as long,",
 						"          RentalID as short,",
-						"          RentalDate as string,",
-						"          InventoryID as short,",
 						"          CustomerID as short,",
+						"          Amount as double,",
+						"          PaymentDate as string,",
+						"          RentalDate as string,",
 						"          ReturnDate as string,",
+						"          InventoryID as short,",
 						"          FilmID as short,",
-						"          StoreID as short,",
-						"          PaymentID as short,",
-						"          Amount as double",
+						"          StoreID as short",
 						"     ),",
 						"     allowSchemaDrift: true,",
 						"     validateSchema: false,",
 						"     ignoreNoFilesFound: false,",
 						"     format: 'delta',",
 						"     fileSystem: 'fsuofuis6480dldw001',",
-						"     folderPath: 'IS6480_DW_GroupSix_Project/DimRental',",
-						"     partitionBy('key',",
-						"          0,",
-						"          RentalKey",
-						"     )) ~> sourceDimRental",
+						"     folderPath: 'IS6480_DW_GroupSix_Project/DimRental') ~> sourceDimRental",
 						"source(output(",
 						"          RentalID as short,",
 						"          RentalDate as date,",
@@ -4033,22 +4032,62 @@
 						"     format: 'delta',",
 						"     fileSystem: 'fsuofuis6480dldw001',",
 						"     folderPath: 'IS6480_DW_GroupSix_Project/DimDate') ~> sourceDimRentalDate",
-						"sourceDimRental, sourceDimFilm union(byName: true,",
-						"     partitionBy('key',",
-						"          0,",
-						"          RentalKey",
-						"     ))~> union1",
-						"union1, sourceDimRental join(union1@RentalKey == sourceDimRental@RentalKey,",
-						"     joinType:'outer',",
+						"sourceDimRental, sourceDimRentalDate join(sourceDimRental@RentalID == sourceDimRentalDate@RentalID,",
+						"     joinType:'left',",
 						"     matchType:'exact',",
 						"     ignoreSpaces: false,",
 						"     broadcast: 'auto')~> join1",
-						"join1, sourceDimCustomer join(sourceDimRental@CustomerID == CustomerKey,",
-						"     joinType:'outer',",
+						"select1, sourceDimFilm join(FilmID == FilmKey,",
+						"     joinType:'left',",
 						"     matchType:'exact',",
 						"     ignoreSpaces: false,",
 						"     broadcast: 'auto')~> join2",
-						"join2 sink(allowSchemaDrift: true,",
+						"join1 select(mapColumn(",
+						"          RentalKey,",
+						"          RentalID = sourceDimRental@RentalID,",
+						"          CustomerID = sourceDimRental@CustomerID,",
+						"          Amount,",
+						"          PaymentDate,",
+						"          RentalDate = sourceDimRental@RentalDate,",
+						"          ReturnDate = sourceDimRental@ReturnDate,",
+						"          InventoryID = sourceDimRental@InventoryID,",
+						"          FilmID,",
+						"          StoreID,",
+						"          DateKey,",
+						"          DayOfWeek,",
+						"          WeekOfYear,",
+						"          Month",
+						"     ),",
+						"     skipDuplicateMapInputs: false,",
+						"     skipDuplicateMapOutputs: false) ~> select1",
+						"join2 select(mapColumn(",
+						"          RentalKey,",
+						"          FilmKey,",
+						"          RentalID,",
+						"          CustomerID,",
+						"          Amount,",
+						"          PaymentDate,",
+						"          RentalDate,",
+						"          ReturnDate,",
+						"          InventoryID,",
+						"          FilmID,",
+						"          StoreID,",
+						"          DateKey,",
+						"          DayOfWeek,",
+						"          WeekOfYear,",
+						"          Month,",
+						"          Title = title,",
+						"          Description = description,",
+						"          Rating = rating",
+						"     ),",
+						"     skipDuplicateMapInputs: false,",
+						"     skipDuplicateMapOutputs: false) ~> select2",
+						"select2, sourceDimCustomer join(select2@CustomerID == CustomerKey,",
+						"     joinType:'inner',",
+						"     matchType:'exact',",
+						"     ignoreSpaces: false,",
+						"     broadcast: 'auto')~> join3",
+						"join3 sink(allowSchemaDrift: true,",
 						"     validateSchema: false,",
 						"     format: 'delta',",
 						"     fileSystem: 'fsuofuis6480dldw001',",
@@ -4066,18 +4105,24 @@
 						"     postCommands: [],",
 						"     mapColumn(",
 						"          RentalKey,",
-						"          FilmKey,",
-						"          RentalDate,",
 						"          CustomerKey,",
-						"          ReturnDate,",
-						"          FilmID,",
-						"          StoreID,",
+						"          FilmKey,",
 						"          Amount,",
-						"          Name,",
+						"          PaymentDate,",
+						"          RentalDate,",
+						"          ReturnDate,",
+						"          InventoryID,",
+						"          FilmID,",
+						"          DateKey,",
+						"          DayOfWeek,",
+						"          WeekOfYear,",
+						"          Month,",
 						"          Title,",
 						"          Description,",
-						"          RentalRate,",
-						"          Rating",
+						"          Rating,",
+						"          StoreID = sourceDimCustomer@StoreID,",
+						"          FirstName,",
+						"          LastName",
 						"     )) ~> sink1"
 					]
 				}
@@ -4103,6 +4148,26 @@
 			"properties": {
 				"content": {
 					"query": "-- This is auto-generated code\nSELECT\n    TOP 100 *\nFROM\n    OPENROWSET(\n        BULK 'https://sa6480dldwhndev001.dfs.core.windows.net/fsuofuis6480dldw001/Gold/UofU/IS6480/Instructor/RentalDB/DimActor/',\n        FORMAT = 'DELTA'\n    ) AS [result]\n",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "master",
+						"poolName": "Built-in"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/SQL DimRental')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "-- This is auto-generated code\nSELECT\n    TOP 100 *\nFROM\n    OPENROWSET(\n        BULK 'https://sa6480dldwhndev001.dfs.core.windows.net/fsuofuis6480dldw001/IS6480_DW_GroupSix_Project/DimRental/',\n        FORMAT = 'DELTA'\n    ) AS [result]\n",
 					"metadata": {
 						"language": "sql"
 					},
