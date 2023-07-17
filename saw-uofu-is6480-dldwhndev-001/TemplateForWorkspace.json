@@ -3196,7 +3196,7 @@
 			"apiVersion": "2019-06-01-preview",
 			"properties": {
 				"folder": {
-					"name": "Project"
+					"name": "Project/Backup"
 				},
 				"type": "MappingDataFlow",
 				"typeProperties": {
@@ -3370,7 +3370,7 @@
 			"apiVersion": "2019-06-01-preview",
 			"properties": {
 				"folder": {
-					"name": "Project"
+					"name": "Project/Backup"
 				},
 				"type": "MappingDataFlow",
 				"typeProperties": {
@@ -3668,7 +3668,7 @@
 			"apiVersion": "2019-06-01-preview",
 			"properties": {
 				"folder": {
-					"name": "Project"
+					"name": "Project/Backup"
 				},
 				"type": "MappingDataFlow",
 				"typeProperties": {
@@ -4321,7 +4321,7 @@
 			"apiVersion": "2019-06-01-preview",
 			"properties": {
 				"folder": {
-					"name": "Project"
+					"name": "Project/Backup"
 				},
 				"type": "MappingDataFlow",
 				"typeProperties": {
