@@ -793,8 +793,7 @@
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('workspaceId'), '/dataflows/DimFilmTransform')]",
-				"[concat(variables('workspaceId'), '/integrationRuntimes/AutoResolveIntegrationRuntime')]"
+				"[concat(variables('workspaceId'), '/dataflows/DimFilmTransform')]"
 			]
 		},
 		{
@@ -3987,11 +3986,12 @@
 						"     folderPath: 'IS6480_DW_GroupSix_Project/DimCustomer') ~> sourceDimCustomer",
 						"source(output(",
 						"          FilmKey as long,",
-						"          film_id as short,",
-						"          title as string,",
-						"          description as string,",
-						"          rental_rate as double,",
-						"          rating as string",
+						"          FilmID as short,",
+						"          Category as string,",
+						"          Title as string,",
+						"          Description as string,",
+						"          RentalRate as double,",
+						"          Rating as string",
 						"     ),",
 						"     allowSchemaDrift: true,",
 						"     validateSchema: false,",
@@ -4035,12 +4035,12 @@
 						"     fileSystem: 'fsuofuis6480dldw001',",
 						"     folderPath: 'IS6480_DW_GroupSix_Project/DimDate') ~> sourceDimRentalDate",
 						"sourceDimRental, sourceDimRentalDate join(sourceDimRental@RentalID == sourceDimRentalDate@RentalID,",
-						"     joinType:'left',",
+						"     joinType:'inner',",
 						"     matchType:'exact',",
 						"     ignoreSpaces: false,",
 						"     broadcast: 'auto')~> join1",
-						"select1, sourceDimFilm join(FilmID == FilmKey,",
-						"     joinType:'left',",
+						"select1, sourceDimFilm join(select1@FilmID == sourceDimFilm@FilmID,",
+						"     joinType:'right',",
 						"     matchType:'exact',",
 						"     ignoreSpaces: false,",
 						"     broadcast: 'auto')~> join2",
@@ -4065,22 +4065,19 @@
 						"join2 select(mapColumn(",
 						"          RentalKey,",
 						"          FilmKey,",
+						"          DateKey,",
 						"          RentalID,",
 						"          CustomerID,",
 						"          Amount,",
 						"          PaymentDate,",
-						"          RentalDate,",
-						"          ReturnDate,",
-						"          InventoryID,",
-						"          FilmID,",
 						"          StoreID,",
-						"          DateKey,",
 						"          DayOfWeek,",
 						"          WeekOfYear,",
 						"          Month,",
-						"          Title = title,",
-						"          Description = description,",
-						"          Rating = rating",
+						"          FilmID = sourceDimFilm@FilmID,",
+						"          Category,",
+						"          Title,",
+						"          Rating",
 						"     ),",
 						"     skipDuplicateMapInputs: false,",
 						"     skipDuplicateMapOutputs: false) ~> select2",
@@ -4109,19 +4106,18 @@
 						"          RentalKey,",
 						"          CustomerKey,",
 						"          FilmKey,",
+						"          DateKey,",
+						"          RentalID,",
 						"          Amount,",
 						"          PaymentDate,",
-						"          RentalDate,",
-						"          ReturnDate,",
-						"          InventoryID,",
-						"          FilmID,",
-						"          DateKey,",
 						"          DayOfWeek,",
 						"          WeekOfYear,",
 						"          Month,",
+						"          FilmID,",
+						"          Category,",
 						"          Title,",
-						"          Description,",
 						"          Rating,",
+						"          CustomerID = sourceDimCustomer@CustomerID,",
 						"          StoreID = sourceDimCustomer@StoreID,",
 						"          FirstName,",
 						"          LastName",
@@ -4190,6 +4186,26 @@
 			"properties": {
 				"content": {
 					"query": "-- This is auto-generated code\nSELECT\n    TOP 100 *\nFROM\n    OPENROWSET(\n        BULK 'https://sa6480dldwhndev001.dfs.core.windows.net/fsuofuis6480dldw001/Gold/UofU/IS6480/Instructor/RentalDB/FactActorFilm/',\n        FORMAT = 'DELTA'\n    ) AS [result]\n",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "master",
+						"poolName": "Built-in"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/SQL FactRental')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "-- This is auto-generated code\nSELECT\n    TOP 100 *\nFROM\n    OPENROWSET(\n        BULK 'https://sa6480dldwhndev001.dfs.core.windows.net/fsuofuis6480dldw001/IS6480_DW_GroupSix_Project/FactRental/',\n        FORMAT = 'DELTA'\n    ) AS [result]\n",
 					"metadata": {
 						"language": "sql"
 					},
