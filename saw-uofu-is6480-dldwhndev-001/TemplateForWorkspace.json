@@ -1057,10 +1057,6 @@
 									],
 									"userProperties": [],
 									"typeProperties": {
-										"pipeline": {
-											"referenceName": "PL_Bronze_UofU_IS6480_Instructor_DVDRental_Film_Silver_UofU_IS6480_Instructor_DVDRental_Film_Delta",
-											"type": "PipelineReference"
-										},
 										"waitOnCompletion": true,
 										"parameters": {}
 									}
@@ -1080,8 +1076,7 @@
 				"lastPublishTime": "2023-07-06T02:07:36Z"
 			},
 			"dependsOn": [
-				"[concat(variables('workspaceId'), '/pipelines/PL_Source_UofU_IS6480_Instructor_DVDRental_Any_Bronze_UofU_IS6480_Instructor_DVDRental_Any_CSV')]",
-				"[concat(variables('workspaceId'), '/pipelines/PL_Bronze_UofU_IS6480_Instructor_DVDRental_Film_Silver_UofU_IS6480_Instructor_DVDRental_Film_Delta')]"
+				"[concat(variables('workspaceId'), '/pipelines/PL_Source_UofU_IS6480_Instructor_DVDRental_Any_Bronze_UofU_IS6480_Instructor_DVDRental_Any_CSV')]"
 			]
 		},
 		{
