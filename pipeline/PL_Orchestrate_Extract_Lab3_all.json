@@ -32,17 +32,28 @@
 									}
 								}
 							}
+						},
+						{
+							"name": "Execute Pipeline2",
+							"type": "ExecutePipeline",
+							"dependsOn": [
+								{
+									"activity": "Execute Pipeline1",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"userProperties": [],
+							"typeProperties": {
+								"pipeline": {
+									"referenceName": "PL_Bronze_UofU_IS6480_Instructor_DVDRental_Film_Silver_UofU_IS6480_Instructor_DVDRental_Film_Delta",
+									"type": "PipelineReference"
+								},
+								"waitOnCompletion": true
+							}
 						}
 					]
-				}
-			},
-			{
-				"name": "FilmBronzeToSilver",
-				"type": "ExecutePipeline",
-				"dependsOn": [],
-				"userProperties": [],
-				"typeProperties": {
-					"waitOnCompletion": true
 				}
 			}
 		],
