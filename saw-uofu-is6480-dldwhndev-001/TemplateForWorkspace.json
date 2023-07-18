@@ -4133,6 +4133,9 @@
 						},
 						{
 							"name": "join3"
+						},
+						{
+							"name": "select3"
 						}
 					],
 					"scriptLines": [
@@ -4252,7 +4255,22 @@
 						"     matchType:'exact',",
 						"     ignoreSpaces: false,",
 						"     broadcast: 'auto')~> join3",
-						"join3 sink(allowSchemaDrift: true,",
+						"join3 select(mapColumn(",
+						"          CustomerKey,",
+						"          RentalKey,",
+						"          FilmKey,",
+						"          DateKey,",
+						"          Category,",
+						"          Rating,",
+						"          Amount,",
+						"          StoreID = select2@StoreID,",
+						"          DayOfWeek,",
+						"          WeekOfYear,",
+						"          Month",
+						"     ),",
+						"     skipDuplicateMapInputs: false,",
+						"     skipDuplicateMapOutputs: false) ~> select3",
+						"select3 sink(allowSchemaDrift: true,",
 						"     validateSchema: false,",
 						"     format: 'delta',",
 						"     fileSystem: 'fsuofuis6480dldw001',",
@@ -4270,24 +4288,17 @@
 						"     postCommands: [],",
 						"     saveOrder: 1,",
 						"     mapColumn(",
+						"          CustomerKey,",
 						"          RentalKey,",
 						"          FilmKey,",
 						"          DateKey,",
-						"          RentalID,",
+						"          Category,",
+						"          Rating,",
 						"          Amount,",
-						"          PaymentDate,",
+						"          StoreID,",
 						"          DayOfWeek,",
 						"          WeekOfYear,",
-						"          Month,",
-						"          FilmID,",
-						"          Category,",
-						"          Title,",
-						"          Rating,",
-						"          CustomerKey,",
-						"          CustomerID = sourceDimCustomer@CustomerID,",
-						"          StoreID = sourceDimCustomer@StoreID,",
-						"          FirstName,",
-						"          LastName",
+						"          Month",
 						"     )) ~> sink1"
 					]
 				}
