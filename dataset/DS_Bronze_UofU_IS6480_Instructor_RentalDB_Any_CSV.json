@@ -18,7 +18,7 @@
 				"type": "AzureBlobFSLocation",
 				"fileName": "data.csv",
 				"folderPath": {
-					"value": "@concat('Bronze/UofU/IS6480/Instructor/RentalDB/', dataset().datasetName)",
+					"value": "@concat('IS6480_DW_GroupSix_Project/', dataset().datasetName)",
 					"type": "Expression"
 				},
 				"fileSystem": "fsuofuis6480dldw001"
