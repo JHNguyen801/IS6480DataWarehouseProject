@@ -65,8 +65,7 @@
 				"          CustomerID = customer_id,",
 				"          StoreID = store_id,",
 				"          FirstName = first_name,",
-				"          LastName = last_name,",
-				"          create_date",
+				"          LastName = last_name",
 				"     ),",
 				"     skipDuplicateMapInputs: false,",
 				"     skipDuplicateMapOutputs: false) ~> dimselect",
@@ -96,8 +95,7 @@
 				"          CustomerID,",
 				"          StoreID,",
 				"          FirstName,",
-				"          LastName,",
-				"          create_date",
+				"          LastName",
 				"     )) ~> dimsink"
 			]
 		}
