@@ -1,5 +1,5 @@
 {
-	"name": "Pipeline 1",
+	"name": "P1_ExtractCopySources",
 	"properties": {
 		"activities": [
 			{
@@ -26,7 +26,10 @@
 								},
 								"waitOnCompletion": true,
 								"parameters": {
-									"datasetName": "@item()"
+									"datasetName": {
+										"value": "@item()",
+										"type": "Expression"
+									}
 								}
 							}
 						}
