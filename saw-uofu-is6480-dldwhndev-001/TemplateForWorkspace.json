@@ -1451,6 +1451,60 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('workspaceName'), '/Pipeline 1')]",
+			"type": "Microsoft.Synapse/workspaces/pipelines",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"activities": [
+					{
+						"name": "ForEach1",
+						"type": "ForEach",
+						"dependsOn": [],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@createArray('customer','inventory','film_category','rental','category','payment', 'film')",
+								"type": "Expression"
+							},
+							"isSequential": false,
+							"activities": [
+								{
+									"name": "Execute Pipeline1",
+									"type": "ExecutePipeline",
+									"dependsOn": [],
+									"userProperties": [],
+									"typeProperties": {
+										"pipeline": {
+											"referenceName": "PL1_CopyandExtract",
+											"type": "PipelineReference"
+										},
+										"waitOnCompletion": true,
+										"parameters": {
+											"datasetName": {
+												"value": "@item()",
+												"type": "Expression"
+											}
+										}
+									}
+								}
+							]
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"folder": {
+					"name": "GroupSixProjectMovieDB"
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/pipelines/PL1_CopyandExtract')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('workspaceName'), '/DS_Bronze_Project_CSV')]",
 			"type": "Microsoft.Synapse/workspaces/datasets",
 			"apiVersion": "2019-06-01-preview",
