@@ -1,0 +1,42 @@
+{
+	"name": "Pipeline 1",
+	"properties": {
+		"activities": [
+			{
+				"name": "ForEach1",
+				"type": "ForEach",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@createArray('customer','inventory','film_category','rental','category','payment', 'film')",
+						"type": "Expression"
+					},
+					"isSequential": false,
+					"activities": [
+						{
+							"name": "Execute Pipeline1",
+							"type": "ExecutePipeline",
+							"dependsOn": [],
+							"userProperties": [],
+							"typeProperties": {
+								"pipeline": {
+									"referenceName": "PL1_CopyandExtract",
+									"type": "PipelineReference"
+								},
+								"waitOnCompletion": true,
+								"parameters": {
+									"datasetName": "@item()"
+								}
+							}
+						}
+					]
+				}
+			}
+		],
+		"folder": {
+			"name": "GroupSixProjectMovieDB"
+		},
+		"annotations": []
+	}
+}
