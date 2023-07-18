@@ -1467,7 +1467,6 @@
 				"typeProperties": {
 					"location": {
 						"type": "AzureBlobFSLocation",
-						"fileName": "data.csv",
 						"folderPath": {
 							"value": "@concat('IS6480_DW_GroupSix_Project/', dataset().datasetName)",
 							"type": "Expression"
