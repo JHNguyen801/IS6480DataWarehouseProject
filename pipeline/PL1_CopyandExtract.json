@@ -62,13 +62,10 @@
 				],
 				"outputs": [
 					{
-						"referenceName": "DS_Bronze_UofU_IS6480_Instructor_DVDRental_Any_CSV",
+						"referenceName": "DS_Bronze_UofU_IS6480_Instructor_RentalDB_Any_CSV",
 						"type": "DatasetReference",
 						"parameters": {
-							"datasetName": {
-								"value": "@pipeline().parameters.datasetName",
-								"type": "Expression"
-							}
+							"datasetName": "FilmExtract"
 						}
 					}
 				]
