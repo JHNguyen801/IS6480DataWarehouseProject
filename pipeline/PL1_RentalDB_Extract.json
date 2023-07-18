@@ -21,7 +21,11 @@
 						"storeSettings": {
 							"type": "AzureBlobStorageReadSettings",
 							"recursive": true,
-							"wildcardFolderPath": "@concat('Source/PostgresTutorial/DVDRental/', pipeline().parameters.datasetName)",
+							"wildcardFolderPath": {
+								"value": "@concat('Source/PostgresTutorial/DVDRental/', pipeline().parameters.datasetName)",
+								"type": "Expression"
+							},
+							"wildcardFileName": "*",
 							"enablePartitionDiscovery": false
 						},
 						"formatSettings": {
