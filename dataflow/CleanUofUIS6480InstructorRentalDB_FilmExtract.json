@@ -45,7 +45,7 @@
 				"     ignoreNoFilesFound: false,",
 				"     format: 'delimited',",
 				"     fileSystem: 'fsuofuis6480dldw001',",
-				"     folderPath: 'IS6480_DW_GroupSix_Project/customer',",
+				"     folderPath: 'Bronze/UofU/IS6480/Instructor/DVDRental/Actor',",
 				"     fileName: 'data.csv',",
 				"     columnDelimiter: ',',",
 				"     escapeChar: '\\\\',",
