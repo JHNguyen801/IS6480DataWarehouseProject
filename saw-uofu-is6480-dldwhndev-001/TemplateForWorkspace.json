@@ -200,7 +200,7 @@
 						"userProperties": [],
 						"typeProperties": {
 							"dataflow": {
-								"referenceName": "DimFilmCleanChallenge2",
+								"referenceName": "DimFilmClean",
 								"type": "DataFlowReference",
 								"parameters": {},
 								"datasetParameters": {
@@ -228,7 +228,7 @@
 				"lastPublishTime": "2023-07-10T01:40:52Z"
 			},
 			"dependsOn": [
-				"[concat(variables('workspaceId'), '/dataflows/DimFilmCleanChallenge2')]"
+				"[concat(variables('workspaceId'), '/dataflows/DimFilmClean')]"
 			]
 		},
 		{
@@ -618,7 +618,7 @@
 									"type": "AzureBlobStorageReadSettings",
 									"recursive": true,
 									"wildcardFolderPath": {
-										"value": "@concat('Source/CompanyXYZ/RentalDB/', pipeline().parameters.datasetName)",
+										"value": "@concat('Source/PostgresTutorial/DVDRental/', pipeline().parameters.datasetName)",
 										"type": "Expression"
 									},
 									"wildcardFileName": "*",
@@ -661,14 +661,9 @@
 						],
 						"outputs": [
 							{
-								"referenceName": "DS_Bronze_UofU_IS6480_Instructor_RentalDB_Any_CSV",
+								"referenceName": "DS_Project_Extract",
 								"type": "DatasetReference",
-								"parameters": {
-									"datasetName": {
-										"value": "@pipeline().parameters.datasetName",
-										"type": "Expression"
-									}
-								}
+								"parameters": {}
 							}
 						]
 					}
@@ -679,8 +674,7 @@
 				},
 				"parameters": {
 					"datasetName": {
-						"type": "string",
-						"defaultValue": "FilmExtract"
+						"type": "string"
 					}
 				},
 				"folder": {
@@ -691,7 +685,7 @@
 			},
 			"dependsOn": [
 				"[concat(variables('workspaceId'), '/datasets/DS_Source_UofU_IS6480_Instructor_RentalDB_Any_CSV')]",
-				"[concat(variables('workspaceId'), '/datasets/DS_Bronze_UofU_IS6480_Instructor_RentalDB_Any_CSV')]"
+				"[concat(variables('workspaceId'), '/datasets/DS_Project_Extract')]"
 			]
 		},
 		{
@@ -1607,6 +1601,34 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('workspaceName'), '/DS_Project_Extract')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "saw-uofu-is6480-dldwhndev-001-WorkspaceDefaultStorage",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"folderPath": "IS6480_DW_GroupSix_Project",
+						"fileSystem": "fsuofuis6480dldw001"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/saw-uofu-is6480-dldwhndev-001-WorkspaceDefaultStorage')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('workspaceName'), '/DS_Source_UofU_IS6480_Instructor_DVDRental_Actor_CSV')]",
 			"type": "Microsoft.Synapse/workspaces/datasets",
 			"apiVersion": "2019-06-01-preview",
@@ -1695,11 +1717,7 @@
 				"typeProperties": {
 					"location": {
 						"type": "AzureBlobStorageLocation",
-						"fileName": "data.csv",
-						"folderPath": {
-							"value": "@concat('Bronze/UofU/IS6480/Instructor/RentalDB/', dataset().datasetName)",
-							"type": "Expression"
-						},
+						"folderPath": "Source/PostgresTutorial/DVDRental",
 						"container": "is6480"
 					},
 					"columnDelimiter": ",",
@@ -2571,7 +2589,7 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('workspaceName'), '/DimFilmCleanChallenge2')]",
+			"name": "[concat(parameters('workspaceName'), '/DimFilmClean')]",
 			"type": "Microsoft.Synapse/workspaces/dataflows",
 			"apiVersion": "2019-06-01-preview",
 			"properties": {
