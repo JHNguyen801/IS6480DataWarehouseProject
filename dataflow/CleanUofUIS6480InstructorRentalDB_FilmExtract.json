@@ -48,7 +48,7 @@
 				"     ignoreNoFilesFound: false,",
 				"     format: 'delimited',",
 				"     fileSystem: 'fsuofuis6480dldw001',",
-				"     folderPath: 'Bronze/UofU/IS6480/Instructor/RentalDB/FilmExtract',",
+				"     folderPath: 'IS6480_DW_GroupSix_Project/customer',",
 				"     fileName: 'data.csv',",
 				"     columnDelimiter: ',',",
 				"     escapeChar: '\\\\',",
