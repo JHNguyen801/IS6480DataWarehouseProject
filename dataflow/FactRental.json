@@ -174,7 +174,7 @@
 				"     ),",
 				"     skipDuplicateMapInputs: false,",
 				"     skipDuplicateMapOutputs: false) ~> select2",
-				"select2, sourceDimCustomer join(select2@CustomerID == CustomerKey,",
+				"select2, sourceDimCustomer join(select2@CustomerID == sourceDimCustomer@CustomerID,",
 				"     joinType:'inner',",
 				"     matchType:'exact',",
 				"     ignoreSpaces: false,",
