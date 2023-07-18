@@ -10,8 +10,7 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
-				"fileName": "data.csv",
-				"folderPath": "@concat('IS6480_DW_GroupSix_Project/', dataset().datasetName)",
+				"folderPath": "IS6480_DW_GroupSix_Project",
 				"fileSystem": "fsuofuis6480dldw001"
 			},
 			"columnDelimiter": ",",
