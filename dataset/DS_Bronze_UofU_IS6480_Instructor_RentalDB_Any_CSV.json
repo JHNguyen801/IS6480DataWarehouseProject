@@ -1,5 +1,5 @@
 {
-	"name": "DS_Bronze_Project_CSV",
+	"name": "DS_Bronze_UofU_IS6480_Instructor_RentalDB_Any_CSV",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "saw-uofu-is6480-dldwhndev-001-WorkspaceDefaultStorage",
@@ -18,7 +18,7 @@
 				"type": "AzureBlobFSLocation",
 				"fileName": "data.csv",
 				"folderPath": {
-					"value": "@concat('IS6480_DW_GroupSix_Project/', dataset().datasetName)",
+					"value": "@concat('Bronze/UofU/IS6480/Instructor/RentalDB/', dataset().datasetName)",
 					"type": "Expression"
 				},
 				"fileSystem": "fsuofuis6480dldw001"

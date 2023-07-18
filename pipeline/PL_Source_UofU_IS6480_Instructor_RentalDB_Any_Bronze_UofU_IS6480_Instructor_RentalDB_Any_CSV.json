@@ -68,7 +68,7 @@
 				],
 				"outputs": [
 					{
-						"referenceName": "DS_Bronze_UofU_IS6480_Instructor_RentalDB_Any_CSV",
+						"referenceName": "DS_Bronze_Project_CSV",
 						"type": "DatasetReference",
 						"parameters": {
 							"datasetName": {
