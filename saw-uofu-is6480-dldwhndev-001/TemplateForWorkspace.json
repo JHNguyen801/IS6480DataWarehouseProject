@@ -559,7 +559,7 @@
 						],
 						"outputs": [
 							{
-								"referenceName": "DS_Bronze_UofU_IS6480_Instructor_RentalDB_Any_CSV",
+								"referenceName": "DS_Bronze_Project_CSV",
 								"type": "DatasetReference",
 								"parameters": {
 									"datasetName": "FilmExtract"
@@ -586,7 +586,7 @@
 			},
 			"dependsOn": [
 				"[concat(variables('workspaceId'), '/datasets/DS_Source_UofU_IS6480_Instructor_DVDRental_Any_CSV')]",
-				"[concat(variables('workspaceId'), '/datasets/DS_Bronze_UofU_IS6480_Instructor_RentalDB_Any_CSV')]"
+				"[concat(variables('workspaceId'), '/datasets/DS_Bronze_Project_CSV')]"
 			]
 		},
 		{
@@ -1465,7 +1465,7 @@
 						],
 						"outputs": [
 							{
-								"referenceName": "DS_Bronze_UofU_IS6480_Instructor_RentalDB_Any_CSV",
+								"referenceName": "DS_Bronze_Project_CSV",
 								"type": "DatasetReference",
 								"parameters": {
 									"datasetName": {
@@ -1495,7 +1495,45 @@
 			},
 			"dependsOn": [
 				"[concat(variables('workspaceId'), '/datasets/DS_Source_UofU_IS6480_Instructor_RentalDB_Any_CSV')]",
-				"[concat(variables('workspaceId'), '/datasets/DS_Bronze_UofU_IS6480_Instructor_RentalDB_Any_CSV')]"
+				"[concat(variables('workspaceId'), '/datasets/DS_Bronze_Project_CSV')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/DS_Bronze_Project_CSV')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "saw-uofu-is6480-dldwhndev-001-WorkspaceDefaultStorage",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"datasetName": {
+						"type": "string",
+						"defaultValue": "FilmExtract"
+					}
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "data.csv",
+						"folderPath": {
+							"value": "@concat('IS6480_DW_GroupSix_Project/', dataset().datasetName)",
+							"type": "Expression"
+						},
+						"fileSystem": "fsuofuis6480dldw001"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/saw-uofu-is6480-dldwhndev-001-WorkspaceDefaultStorage')]"
 			]
 		},
 		{
@@ -1517,6 +1555,7 @@
 					},
 					"columnDelimiter": ",",
 					"escapeChar": "\\",
+					"firstRowAsHeader": true,
 					"quoteChar": "\""
 				},
 				"schema": []
@@ -1585,37 +1624,9 @@
 						"type": "AzureBlobFSLocation",
 						"fileName": "data.csv",
 						"folderPath": {
-							"value": "@concat('IS6480_DW_GroupSix_Project/', dataset().datasetName)",
+							"value": "@concat('Bronze/UofU/IS6480/Instructor/RentalDB/', dataset().datasetName)",
 							"type": "Expression"
 						},
-						"fileSystem": "fsuofuis6480dldw001"
-					},
-					"columnDelimiter": ",",
-					"escapeChar": "\\",
-					"firstRowAsHeader": true,
-					"quoteChar": "\""
-				},
-				"schema": []
-			},
-			"dependsOn": [
-				"[concat(variables('workspaceId'), '/linkedServices/saw-uofu-is6480-dldwhndev-001-WorkspaceDefaultStorage')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('workspaceName'), '/DS_Project_Extract')]",
-			"type": "Microsoft.Synapse/workspaces/datasets",
-			"apiVersion": "2019-06-01-preview",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "saw-uofu-is6480-dldwhndev-001-WorkspaceDefaultStorage",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobFSLocation",
-						"folderPath": "IS6480_DW_GroupSix_Project",
 						"fileSystem": "fsuofuis6480dldw001"
 					},
 					"columnDelimiter": ",",
