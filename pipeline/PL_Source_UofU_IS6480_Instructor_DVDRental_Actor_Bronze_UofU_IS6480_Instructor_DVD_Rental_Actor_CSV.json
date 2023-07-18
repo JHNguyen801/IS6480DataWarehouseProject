@@ -18,7 +18,7 @@
 					"source": {
 						"type": "DelimitedTextSource",
 						"storeSettings": {
-							"type": "AzureBlobStorageReadSettings",
+							"type": "AzureBlobFSReadSettings",
 							"recursive": true,
 							"wildcardFolderPath": "Source/PostgresTutorial/DVDRental/actor",
 							"wildcardFileName": "*",
@@ -39,8 +39,22 @@
 							"fileExtension": ".csv"
 						}
 					},
-					"enableStaging": false
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
 				},
+				"inputs": [
+					{
+						"referenceName": "DS_Bronze_UofU_IS6480_Instructor_DVDRental_Actor_CSV",
+						"type": "DatasetReference"
+					}
+				],
 				"outputs": [
 					{
 						"referenceName": "DS_Bronze_UofU_IS6480_Instructor_DVDRental_Actor_CSV",
