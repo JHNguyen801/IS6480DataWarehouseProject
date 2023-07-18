@@ -511,7 +511,10 @@
 								"referenceName": "DS_Bronze_Project_CSV",
 								"type": "DatasetReference",
 								"parameters": {
-									"datasetName": "FilmExtract"
+									"datasetName": {
+										"value": "@pipeline().parameters.datasetName",
+										"type": "Expression"
+									}
 								}
 							}
 						]
