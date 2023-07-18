@@ -222,7 +222,6 @@
 				"          Category,",
 				"          Rating,",
 				"          Amount,",
-				"          PaymentDate,",
 				"          StoreID,",
 				"          DayOfWeek,",
 				"          WeekOfYear,",
