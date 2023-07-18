@@ -4259,7 +4259,7 @@
 						"     ignoreSpaces: false,",
 						"     broadcast: 'auto')~> join1",
 						"select1, sourceDimFilm join(select1@FilmID == sourceDimFilm@FilmID,",
-						"     joinType:'inner',",
+						"     joinType:'right',",
 						"     matchType:'exact',",
 						"     ignoreSpaces: false,",
 						"     broadcast: 'auto')~> join2",
@@ -4740,6 +4740,26 @@
 		},
 		{
 			"name": "[concat(parameters('workspaceName'), '/SQL script 1')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "-- This is auto-generated code\nSELECT\n    *\nFROM\n    OPENROWSET(\n        BULK 'https://sa6480dldwhndev001.dfs.core.windows.net/fsuofuis6480dldw001/IS6480_DW_GroupSix_Project/FactRental/',\n        FORMAT = 'DELTA'\n    ) AS [result]\n",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "master",
+						"poolName": "Built-in"
+					},
+					"resultLimit": -1
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/SQL script 2')]",
 			"type": "Microsoft.Synapse/workspaces/sqlscripts",
 			"apiVersion": "2019-06-01-preview",
 			"properties": {
