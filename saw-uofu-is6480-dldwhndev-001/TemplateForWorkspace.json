@@ -612,7 +612,7 @@
 							"source": {
 								"type": "DelimitedTextSource",
 								"storeSettings": {
-									"type": "AzureBlobStorageReadSettings",
+									"type": "AzureBlobFSReadSettings",
 									"recursive": true,
 									"wildcardFolderPath": {
 										"value": "@concat('Source/PostgresTutorial/DVDRental/', pipeline().parameters.datasetName)",
@@ -649,9 +649,11 @@
 						},
 						"inputs": [
 							{
-								"referenceName": "DS_Source_UofU_IS6480_Instructor_DVDRental_Actor_CSV",
+								"referenceName": "DS_Bronze_UofU_IS6480_Instructor_DVDRental_Any_CSV",
 								"type": "DatasetReference",
-								"parameters": {}
+								"parameters": {
+									"datasetName": "actor"
+								}
 							}
 						],
 						"outputs": [
@@ -685,7 +687,6 @@
 				"lastPublishTime": "2023-07-01T08:08:15Z"
 			},
 			"dependsOn": [
-				"[concat(variables('workspaceId'), '/datasets/DS_Source_UofU_IS6480_Instructor_DVDRental_Actor_CSV')]",
 				"[concat(variables('workspaceId'), '/datasets/DS_Bronze_UofU_IS6480_Instructor_DVDRental_Any_CSV')]"
 			]
 		},
@@ -1231,7 +1232,7 @@
 							"source": {
 								"type": "DelimitedTextSource",
 								"storeSettings": {
-									"type": "AzureBlobStorageReadSettings",
+									"type": "AzureBlobFSReadSettings",
 									"recursive": true,
 									"wildcardFolderPath": "Source/PostgresTutorial/DVDRental/actor",
 									"wildcardFileName": "*",
@@ -1264,7 +1265,7 @@
 						},
 						"inputs": [
 							{
-								"referenceName": "DS_Source_UofU_IS6480_Instructor_DVDRental_Actor_CSV",
+								"referenceName": "DS_Bronze_UofU_IS6480_Instructor_DVDRental_Actor_CSV",
 								"type": "DatasetReference",
 								"parameters": {}
 							}
@@ -1289,7 +1290,6 @@
 				"lastPublishTime": "2023-05-30T01:45:46Z"
 			},
 			"dependsOn": [
-				"[concat(variables('workspaceId'), '/datasets/DS_Source_UofU_IS6480_Instructor_DVDRental_Actor_CSV')]",
 				"[concat(variables('workspaceId'), '/datasets/DS_Bronze_UofU_IS6480_Instructor_DVDRental_Actor_CSV')]"
 			]
 		},
@@ -1638,47 +1638,6 @@
 			},
 			"dependsOn": [
 				"[concat(variables('workspaceId'), '/linkedServices/saw-uofu-is6480-dldwhndev-001-WorkspaceDefaultStorage')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('workspaceName'), '/DS_Source_UofU_IS6480_Instructor_DVDRental_Actor_CSV')]",
-			"type": "Microsoft.Synapse/workspaces/datasets",
-			"apiVersion": "2019-06-01-preview",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "LS_Blob_UofU_IS6480_sauofuis6480instdev001_is6480",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobStorageLocation",
-						"folderPath": "Source/PostgresTutorial/DVDRental/actor",
-						"container": "is6480"
-					},
-					"columnDelimiter": ",",
-					"escapeChar": "\\",
-					"firstRowAsHeader": true,
-					"quoteChar": "\""
-				},
-				"schema": [
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					}
-				]
-			},
-			"dependsOn": [
-				"[concat(variables('workspaceId'), '/linkedServices/LS_Blob_UofU_IS6480_sauofuis6480instdev001_is6480')]"
 			]
 		},
 		{
