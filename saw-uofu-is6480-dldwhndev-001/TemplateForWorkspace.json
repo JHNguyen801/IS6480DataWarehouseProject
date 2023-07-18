@@ -857,7 +857,7 @@
 			"properties": {
 				"activities": [
 					{
-						"name": "SelectFilmDimSource",
+						"name": "TransfomrDimSource",
 						"type": "ExecuteDataFlow",
 						"dependsOn": [],
 						"policy": {
