@@ -16,11 +16,7 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobStorageLocation",
-				"fileName": "data.csv",
-				"folderPath": {
-					"value": "@concat('Bronze/UofU/IS6480/Instructor/RentalDB/', dataset().datasetName)",
-					"type": "Expression"
-				},
+				"folderPath": "Source/PostgresTutorial/DVDRental",
 				"container": "is6480"
 			},
 			"columnDelimiter": ",",

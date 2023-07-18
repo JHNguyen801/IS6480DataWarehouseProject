@@ -21,11 +21,6 @@
 						"storeSettings": {
 							"type": "AzureBlobStorageReadSettings",
 							"recursive": true,
-							"wildcardFolderPath": {
-								"value": "@concat('Source/CompanyXYZ/RentalDB/', pipeline().parameters.datasetName)",
-								"type": "Expression"
-							},
-							"wildcardFileName": "*",
 							"enablePartitionDiscovery": false
 						},
 						"formatSettings": {
@@ -65,14 +60,8 @@
 				],
 				"outputs": [
 					{
-						"referenceName": "DS_Bronze_UofU_IS6480_Instructor_RentalDB_Any_CSV",
-						"type": "DatasetReference",
-						"parameters": {
-							"datasetName": {
-								"value": "@pipeline().parameters.datasetName",
-								"type": "Expression"
-							}
-						}
+						"referenceName": "DS_Project_Extract",
+						"type": "DatasetReference"
 					}
 				]
 			}
