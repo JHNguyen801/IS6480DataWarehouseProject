@@ -4186,9 +4186,6 @@
 						},
 						{
 							"name": "join3"
-						},
-						{
-							"name": "select3"
 						}
 					],
 					"scriptLines": [
@@ -4308,22 +4305,7 @@
 						"     matchType:'exact',",
 						"     ignoreSpaces: false,",
 						"     broadcast: 'auto')~> join3",
-						"join3 select(mapColumn(",
-						"          RentalKey,",
-						"          CustomerKey,",
-						"          FilmKey,",
-						"          DateKey,",
-						"          Category,",
-						"          Rating,",
-						"          Amount,",
-						"          StoreID = select2@StoreID,",
-						"          DayOfWeek,",
-						"          WeekOfYear,",
-						"          Month",
-						"     ),",
-						"     skipDuplicateMapInputs: false,",
-						"     skipDuplicateMapOutputs: false) ~> select3",
-						"select3 sink(allowSchemaDrift: true,",
+						"join3 sink(allowSchemaDrift: true,",
 						"     validateSchema: false,",
 						"     format: 'delta',",
 						"     fileSystem: 'fsuofuis6480dldw001',",
