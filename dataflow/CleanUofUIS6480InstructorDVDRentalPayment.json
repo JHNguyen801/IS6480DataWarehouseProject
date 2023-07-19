@@ -1,6 +1,9 @@
 {
 	"name": "CleanUofUIS6480InstructorDVDRentalPayment",
 	"properties": {
+		"folder": {
+			"name": "Lab3"
+		},
 		"type": "MappingDataFlow",
 		"typeProperties": {
 			"sources": [
