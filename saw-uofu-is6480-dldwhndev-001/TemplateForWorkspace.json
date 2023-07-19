@@ -581,7 +581,7 @@
 				"parameters": {
 					"datasetName": {
 						"type": "string",
-						"defaultValue": "actor"
+						"defaultValue": "customer"
 					}
 				},
 				"folder": {
@@ -950,8 +950,7 @@
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('workspaceId'), '/dataflows/FactRental')]",
-				"[concat(variables('workspaceId'), '/integrationRuntimes/AutoResolveIntegrationRuntime')]"
+				"[concat(variables('workspaceId'), '/dataflows/FactRental')]"
 			]
 		},
 		{
