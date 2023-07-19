@@ -4585,6 +4585,26 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('workspaceName'), '/Lab-3_Serverless-Objects-Deployment')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "USE DBDLUofUIS6480\nGO\nCREATE EXTERNAL DATA SOURCE DataLakeSilverAll\nWITH ( LOCATION = 'sa6480dldwhndev001.blob.core.windows.net/fsuofuis6480dldw001/Silver'\n, CREDENTIAL= [WorkspaceIdentity]\n)\nGO\nDROP SCHEMA Silver\nGO\nCREATE SCHEMA Silver\nGO\nCREATE LOGIN metabase004 WITH PASSWORD = 'PassGreen87632*'\nGO\nCREATE USER metabase004 FROM LOGIN metabase004\nGO\nGRANT REFERENCES ON DATABASE SCOPED CREDENTIAL::WorkspaceIdentity TO [metabase004]\nGO\nGRANT SELECT ON SCHEMA::Silver TO [metabase004]\nGO\nDENY ADMINISTER DATABASE BULK OPERATIONS TO [metabase004]\nGO\nDROP VIEW [Silver].[UofUIS6480InstructorDVDRentalFilm]\nGO\nCREATE VIEW [Silver].[UofUIS6480InstructorDVDRentalFilm] AS\nSELECT\n    *\nFROM\n    OPENROWSET(\n        BULK 'UofU/IS6480/Instructor/DVDRental/Film/',\n        DATA_SOURCE = 'DataLakeSilverAll',\n        FORMAT = 'delta'\n    ) AS [result]\nGO\nSELECT * FROM [Silver].[UofUIS6480InstructorDVDRentalFilm]\nGO\nDROP VIEW [Silver].[UofUIS6480InstructorDVDRentalPayment]\nGO\nCREATE VIEW [Silver].[UofUIS6480InstructorDVDRentalPayment] AS\nSELECT\n    *\nFROM\n    OPENROWSET(\n        BULK 'UofU/IS6480/Instructor/DVDRental/Payment/',\n        DATA_SOURCE = 'DataLakeSilverAll',\n        FORMAT = 'delta'\n    ) AS [result]\nGO\nSELECT * FROM [Silver].[UofUIS6480InstructorDVDRentalPayment]\nGO\n",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "master",
+						"poolName": "Built-in"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('workspaceName'), '/SQL DimActor_Challenge1')]",
 			"type": "Microsoft.Synapse/workspaces/sqlscripts",
 			"apiVersion": "2019-06-01-preview",
