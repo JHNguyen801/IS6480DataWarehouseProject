@@ -77,7 +77,7 @@
 		"parameters": {
 			"datasetName": {
 				"type": "string",
-				"defaultValue": "actor"
+				"defaultValue": "customer"
 			}
 		},
 		"folder": {
