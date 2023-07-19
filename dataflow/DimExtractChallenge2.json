@@ -1,6 +1,9 @@
 {
 	"name": "DimExtractChallenge2",
 	"properties": {
+		"folder": {
+			"name": "Lab2Challenge"
+		},
 		"type": "MappingDataFlow",
 		"typeProperties": {
 			"sources": [

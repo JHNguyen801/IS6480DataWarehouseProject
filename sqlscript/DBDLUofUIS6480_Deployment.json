@@ -1,0 +1,17 @@
+{
+	"name": "DBDLUofUIS6480_Deployment",
+	"properties": {
+		"content": {
+			"query": "CREATE DATABASE DBDLUofUIS6480\nGO\n\nUSE DBDLUofUIS6480\n\nIF EXISTS\n    (SELECT * FROM sys.symmetric_keys)\n    DROP MASTER KEY\nGO\n\nCREATE MASTER KEY ENCRYPTION BY PASSWORD ='<some password>'\nGO\n\nDROP EXTERNAL DATA SOURCE DataLakeBronzeAll\nGO\n\nDROP DATABASE SCOPED CREDENTIAL WorkspaceIdentity\nGO\n\nCREATE DATABASE SCOPED CREDENTIAL WorkspaceIdentity WITH IDENTITY = 'Managed Identity'\nGO\n\nCREATE EXTERNAL DATA SOURCE DataLakeBronzeAll\nWITH ( LOCATION = 'https://sauofuis6480instdev001.dfs.core.windows.net/fsuofuis6480dldw001/Bronze'\n, CREDENTIAL= [WorkspaceIdentity]\n)\nGO\n\nDROP SCHEMA Bronze\nGO\n\nCREATE SCHEMA Bronze\nGO\n\nCREATE LOGIN metabase001 WITH PASSWORD = '<some password>'\nGO\nCREATE USER metabase001 FROM LOGIN metabase001\nGO\nGRANT REFERENCES ON DATABASE SCOPED CREDENTIAL::WorkspaceIdentity TO [metabase001]\nGO\nGRANT SELECT ON SCHEMA::Bronze TO [metabase001]\nGO\nDENY ADMINISTER DATABASE BULK OPERATIONS TO [metabase001]\nGO\n\nDROP VIEW Bronze.UofUIS6480InstructorDVDRentalActor\nGO\nCREATE VIEW Bronze.UofUIS6480InstructorDVDRentalActor AS\nSELECT\n    *\nFROM\n    OPENROWSET(\n        BULK 'UofU/IS6480/Instructor/DVDRental/Actor/**',\n        DATA_SOURCE = 'DataLakeBronzeAll',\n        FORMAT = 'CSV',\n        PARSER_VERSION = '2.0',\n        HEADER_ROW = TRUE\n    ) AS [result]",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "master",
+				"poolName": "Built-in"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}
