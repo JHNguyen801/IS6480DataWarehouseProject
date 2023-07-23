@@ -1,0 +1,21 @@
+{
+	"name": "DS_Bronze_StLouisFed_CPIAllUrbanConsumer_JSON",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "saw-uofu-is6480-dldwhndev-001-WorkspaceDefaultStorage",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Json",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "data.json",
+				"folderPath": "StLouisFed/FREDAPI/CPIAllUrbanConsumers",
+				"fileSystem": "fsuofuis6480dldw001"
+			}
+		},
+		"schema": {}
+	},
+	"type": "Microsoft.Synapse/workspaces/datasets"
+}

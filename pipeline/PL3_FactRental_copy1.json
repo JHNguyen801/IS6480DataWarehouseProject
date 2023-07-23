@@ -30,6 +30,8 @@
 		"folder": {
 			"name": "GroupSixProjectMovieDB/Backup"
 		},
-		"annotations": []
-	}
+		"annotations": [],
+		"lastPublishTime": "2023-07-18T22:15:45Z"
+	},
+	"type": "Microsoft.Synapse/workspaces/pipelines"
 }

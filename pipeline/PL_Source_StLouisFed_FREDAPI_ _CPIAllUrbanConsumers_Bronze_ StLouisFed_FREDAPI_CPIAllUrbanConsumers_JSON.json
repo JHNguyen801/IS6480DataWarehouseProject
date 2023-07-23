@@ -1,0 +1,59 @@
+{
+	"name": "PL_Source_StLouisFed_FREDAPI_ _CPIAllUrbanConsumers_Bronze_ StLouisFed_FREDAPI_CPIAllUrbanConsumers_JSON",
+	"properties": {
+		"activities": [
+			{
+				"name": "Copy data1",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "RestSource",
+						"httpRequestTimeout": "00:01:40",
+						"requestInterval": "00.00:00:00.010",
+						"requestMethod": "GET",
+						"paginationRules": {
+							"supportRFC5988": "true"
+						}
+					},
+					"sink": {
+						"type": "JsonSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						},
+						"formatSettings": {
+							"type": "JsonWriteSettings"
+						}
+					},
+					"enableStaging": false
+				},
+				"inputs": [
+					{
+						"referenceName": "DS_Source_StLouisFed_CPIAllUrbanConsumer_REST",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "DS_Bronze_StLouisFed_CPIAllUrbanConsumer_JSON",
+						"type": "DatasetReference"
+					}
+				]
+			}
+		],
+		"folder": {
+			"name": "1_SourceToBronze"
+		},
+		"annotations": [],
+		"lastPublishTime": "2023-07-22T00:29:38Z"
+	},
+	"type": "Microsoft.Synapse/workspaces/pipelines"
+}

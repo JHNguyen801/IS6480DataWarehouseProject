@@ -1,0 +1,26 @@
+{
+	"name": "JSON_Silver_Zone",
+	"properties": {
+		"activities": [
+			{
+				"name": "Execute Pipeline1",
+				"type": "ExecutePipeline",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Silver_CPIAllUrbanConsumers",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			}
+		],
+		"folder": {
+			"name": "2_BronzeToSilver"
+		},
+		"annotations": [],
+		"lastPublishTime": "2023-07-23T01:47:14Z"
+	},
+	"type": "Microsoft.Synapse/workspaces/pipelines"
+}

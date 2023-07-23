@@ -1,13 +1,13 @@
 {
-	"name": "ExecuteCleanRentalDB_FilmExtract",
+	"name": "Silver_CPIAllUrbanConsumers",
 	"properties": {
 		"activities": [
 			{
-				"name": "ExecuteCleanUIS6480InstructorRentalDBFilmExecute",
+				"name": "CPIAllUrbanConsumers_Data_flow",
 				"type": "ExecuteDataFlow",
 				"dependsOn": [],
 				"policy": {
-					"timeout": "0.10:00:00",
+					"timeout": "0.12:00:00",
 					"retry": 0,
 					"retryIntervalInSeconds": 30,
 					"secureOutput": false,
@@ -16,7 +16,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataflow": {
-						"referenceName": "CleanUofUIS6480InstructorRentalDB_FilmExtract",
+						"referenceName": "Silver_CPIAllUrbanConsumers",
 						"type": "DataFlowReference"
 					},
 					"compute": {
@@ -27,11 +27,8 @@
 				}
 			}
 		],
-		"folder": {
-			"name": "2_BronzeToSilver"
-		},
 		"annotations": [],
-		"lastPublishTime": "2023-07-14T23:31:16Z"
+		"lastPublishTime": "2023-07-23T01:51:09Z"
 	},
 	"type": "Microsoft.Synapse/workspaces/pipelines"
 }

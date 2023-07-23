@@ -1,0 +1,16 @@
+{
+	"name": "DS_Source_StLouisFed_CPIAllUrbanConsumer_REST",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_REST_StLouisFederalReserve",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "RestResource",
+		"typeProperties": {
+			"relativeUrl": "fred/series/observations?series_id=CPIAUCSL&file_type=json&observation_start=2000-01-01&observation_end=2020-05-01&api_key=006ab49e569d21f4e5bc01a92861df47&frequency=m"
+		},
+		"schema": []
+	},
+	"type": "Microsoft.Synapse/workspaces/datasets"
+}

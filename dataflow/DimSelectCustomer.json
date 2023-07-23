@@ -12,7 +12,7 @@
 						"referenceName": "saw-uofu-is6480-dldwhndev-001-WorkspaceDefaultStorage",
 						"type": "LinkedServiceReference"
 					},
-					"name": "dimActorSource"
+					"name": "dimCustomerSource"
 				}
 			],
 			"sinks": [
@@ -55,13 +55,13 @@
 				"     ignoreNoFilesFound: false,",
 				"     format: 'delimited',",
 				"     fileSystem: 'fsuofuis6480dldw001',",
-				"     folderPath: 'IS6480_DW_GroupSix_Project/customer',",
+				"     folderPath: 'IS6480_DW_GroupSix_Project/Staging/customer',",
 				"     fileName: 'data.csv',",
 				"     columnDelimiter: ',',",
 				"     escapeChar: '\\\\',",
 				"     quoteChar: '\\\"',",
-				"     columnNamesAsHeader: true) ~> dimActorSource",
-				"dimActorSource select(mapColumn(",
+				"     columnNamesAsHeader: true) ~> dimCustomerSource",
+				"dimCustomerSource select(mapColumn(",
 				"          CustomerID = customer_id,",
 				"          StoreID = store_id,",
 				"          FirstName = first_name,",
@@ -77,7 +77,8 @@
 				"     validateSchema: false,",
 				"     format: 'delta',",
 				"     fileSystem: 'fsuofuis6480dldw001',",
-				"     folderPath: 'IS6480_DW_GroupSix_Project/DimCustomer',",
+				"     folderPath: 'IS6480_DW_GroupSix_Project/Presentation/DimCustomer',",
+				"     overwrite: true,",
 				"     mergeSchema: false,",
 				"     autoCompact: false,",
 				"     optimizedWrite: false,",

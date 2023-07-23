@@ -1,0 +1,17 @@
+{
+	"name": "Lab4",
+	"properties": {
+		"content": {
+			"query": "-- This is auto-generated code\nUSE DBDLUofUIS6480\nGO\nCREATE VIEW [Silver].[StLouisFedFREDAPICPIAllUrbanConsumer] AS\nselect \n[date] AS ValueDate,\nvalue AS Value\nFROM\n    OPENROWSET(\n        BULK 'https://sa6480dldwhndev001.dfs.core.windows.net/fsuofuis6480dldw001/StLouisFed/FREDAPI/CPIAllUrbanConsumers/data.json',\n        FORMAT = 'CSV',\n        FIELDQUOTE = '0x0b',\n        FIELDTERMINATOR ='0x0b',\n        ROWTERMINATOR = '0x0b'\n    )\n    WITH (doc nvarchar(max)) as rows\ncross apply openjson (doc, '$.observations')\n        WITH([date] date,\n                value decimal)\n\nSELECT * FROM [Silver].[StLouisFedFREDAPICPIAllUrbanConsumer]",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "DBDLUofUIS6480",
+				"poolName": "Built-in"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}

@@ -1,0 +1,105 @@
+{
+	"name": "Silver_CPIAllUrbanConsumers",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "DS_Bronze_StLouisFed_CPIAllUrbanConsumer_JSON",
+						"type": "DatasetReference"
+					},
+					"name": "source1"
+				}
+			],
+			"sinks": [
+				{
+					"linkedService": {
+						"referenceName": "saw-uofu-is6480-dldwhndev-001-WorkspaceDefaultStorage",
+						"type": "LinkedServiceReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "flatten1"
+				},
+				{
+					"name": "MapDrifted1",
+					"description": "Creates an explicit mapping for each drifted column"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          count as short,",
+				"          file_type as string,",
+				"          limit as integer,",
+				"          observation_end as date,",
+				"          observation_start as date,",
+				"          observations as (date as date, realtime_end as date, realtime_start as date, value as double)[],",
+				"          offset as boolean,",
+				"          order_by as string,",
+				"          output_type as boolean,",
+				"          realtime_end as date,",
+				"          realtime_start as date,",
+				"          sort_order as string,",
+				"          units as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     documentForm: 'documentPerLine') ~> source1",
+				"MapDrifted1 foldDown(unroll(observations, observations),",
+				"     mapColumn(",
+				"          count,",
+				"          file_type,",
+				"          observation_end,",
+				"          observation_start,",
+				"          observations,",
+				"          offset,",
+				"          order_by,",
+				"          output_type,",
+				"          realtime_end,",
+				"          realtime_start,",
+				"          sort_order,",
+				"          units,",
+				"          observation_realtime_start,",
+				"          observation_realtime_end",
+				"     ),",
+				"     skipDuplicateMapInputs: false,",
+				"     skipDuplicateMapOutputs: false) ~> flatten1",
+				"source1 derive(count = toString(byName('count')),",
+				"          file_type = toString(byName('file_type')),",
+				"          observation_end = toString(byName('observation_end')),",
+				"          observation_realtime_start = observations.realtime_start,",
+				"          observation_realtime_end = observations.realtime_end,",
+				"          offset = toString(byName('offset')),",
+				"          order_by = toString(byName('order_by')),",
+				"          output_type = toString(byName('output_type')),",
+				"          realtime_end = toString(byName('realtime_end')),",
+				"          realtime_start = toString(byName('realtime_start')),",
+				"          sort_order = toString(byName('sort_order')),",
+				"          units = toString(byName('units'))) ~> MapDrifted1",
+				"flatten1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'delta',",
+				"     fileSystem: 'fsuofuis6480dldw001',",
+				"     folderPath: 'Silver/UofU/IS6480/Instructor/CPIAllUrbanConsumers ',",
+				"     mergeSchema: false,",
+				"     autoCompact: false,",
+				"     optimizedWrite: false,",
+				"     vacuum: 0,",
+				"     deletable: false,",
+				"     insertable: true,",
+				"     updateable: false,",
+				"     upsertable: false,",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> sink1"
+			]
+		}
+	}
+}

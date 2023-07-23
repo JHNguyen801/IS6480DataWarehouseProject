@@ -90,7 +90,7 @@
 			"name": "1_SourceToBronze"
 		},
 		"annotations": [],
-		"lastPublishTime": "2023-07-10T05:59:11Z"
+		"lastPublishTime": "2023-07-18T06:13:55Z"
 	},
 	"type": "Microsoft.Synapse/workspaces/pipelines"
 }

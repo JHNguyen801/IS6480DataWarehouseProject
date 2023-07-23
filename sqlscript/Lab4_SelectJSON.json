@@ -1,0 +1,17 @@
+{
+	"name": "Lab4_SelectJSON",
+	"properties": {
+		"content": {
+			"query": "USE DBDLUofUIS6480\nGO\n\n-- This is auto-generated code\nSELECT \n    [date] as ValueDate,\n    value as value\n    --jsonContent\n/* --> place the keys that you see in JSON documents in the WITH clause:\n       , JSON_VALUE (jsonContent, '$.key1') AS header1\n       , JSON_VALUE (jsonContent, '$.key2') AS header2\n*/\nFROM\n    OPENROWSET(\n        BULK 'https://sa6480dldwhndev001.dfs.core.windows.net/fsuofuis6480dldw001/StLouisFed/FREDAPI/CPIAllUrbanConsumers/data.json',\n        FORMAT = 'CSV',\n        FIELDTERMINATOR ='0x0b',\n        FIELDQUOTE = '0x0b'\n    ) WITH (doc NVARCHAR(max)) as rows\n    cross apply openjson(doc, '$.observations')\n    WITH (\n        realtime_start date,\n        realtime_end date,\n        [date] date,\n        value decimal) AS [result]\n\nSELECT * FROM Silver.StLouisFedFREDAPICPIAllUrbanConsumer",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "master",
+				"poolName": "Built-in"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}
