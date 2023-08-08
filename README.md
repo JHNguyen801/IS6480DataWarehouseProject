@@ -4,7 +4,7 @@ The project aims to implement the ER Model of the movie rental database into the
 
 # Entity Relational Model
 * The data source used in this project was a reference to the source. 
-https://www.postgresqltutorial.com/postgresql-getting-started/load-postgresql-sample-database/
+https://www.postgresqltutorial.com/postgresql-getting-started/postgresql-sample-database/
 
 ![Alt text](ERModel.png)
 
