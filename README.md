@@ -19,7 +19,7 @@ https://www.postgresqltutorial.com/postgresql-getting-started/postgresql-sample-
 # Dimensional Model
 ![Alt text](DimensionalModel.png)
 
-# Data Warehouse Architecture
+# Data Warehouse Architecture - Azure Synapse Analytics
 * Main Sources: customer, rental, inventory, payment, category, film_category, and film_category
 
 ![Alt text](DataWarehouseArchitecture.png)
